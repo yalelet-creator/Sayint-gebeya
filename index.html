@@ -3,47 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ሳይንት ገበያ | Sayint Gebeya</title>
+    <title>ሳይንት ገበያ | ፎቶ ያለው እውነተኛ ገበያ</title>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
     <style>
         :root { --primary: #27ae60; --secondary: #e67e22; --light: #f4f4f9; }
         body { font-family: 'Segoe UI', sans-serif; margin: 0; background-color: var(--light); color: #333; }
-        header { background: var(--primary); color: white; padding: 20px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .container { max-width: 1000px; margin: auto; padding: 20px; }
-        .admin-section { background: white; padding: 20px; border-radius: 15px; margin-bottom: 30px; border: 1px solid #ddd; display: none; }
-        input { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #ccc; box-sizing: border-box; }
-        .btn { background: var(--primary); color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; }
-        .add-toggle { background: var(--secondary); margin-bottom: 20px; }
-        .product-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
-        .product-card { background: white; padding: 15px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); text-align: center; position: relative; }
-        .product-card img { width: 100%; height: 180px; object-fit: cover; border-radius: 10px; }
-        .price { color: var(--secondary); font-size: 24px; font-weight: bold; margin: 10px 0; }
-        .call-btn { background: var(--primary); color: white; padding: 12px; display: block; text-decoration: none; border-radius: 10px; font-weight: bold; }
+        header { background: var(--primary); color: white; padding: 25px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .container { max-width: 1100px; margin: auto; padding: 20px; }
+        
+        .admin-section { background: white; padding: 25px; border-radius: 20px; margin-bottom: 30px; border: 1px solid #ddd; display: none; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .admin-section h3 { color: var(--primary); margin-top: 0; }
+        input[type="text"], input[type="number"], input[type="file"] { width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 10px; border: 1px solid #ccc; box-sizing: border-box; }
+        
+        .btn { background: var(--primary); color: white; border: none; padding: 15px; border-radius: 12px; cursor: pointer; width: 100%; font-weight: bold; font-size: 17px; transition: 0.3s; }
+        .btn:hover { background: #219150; transform: scale(1.02); }
+        .add-toggle { background: var(--secondary); margin-bottom: 25px; }
+
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; }
+        .product-card { background: white; padding: 15px; border-radius: 20px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); text-align: center; overflow: hidden; }
+        .product-card img { width: 100%; height: 220px; object-fit: cover; border-radius: 15px; margin-bottom: 15px; }
+        .price { color: var(--secondary); font-size: 26px; font-weight: bold; margin: 10px 0; }
+        .call-btn { background: var(--primary); color: white; padding: 14px; display: block; text-decoration: none; border-radius: 12px; font-weight: bold; font-size: 16px; }
+        
+        .loader { display: none; color: #3498db; font-weight: bold; margin-bottom: 10px; }
     </style>
 </head>
 <body>
 
 <header>
     <h1>ሳይንት ገበያ (Sayint Gebeya)</h1>
-    <p>የአምሐራ ሳይንት ዲጂታል የገበያ መረብ</p>
+    <p>የአምሐራ ሳይንት ዲጂታል የገበያ መረብ - በያለለት የተገነባ</p>
 </header>
 
 <div class="container">
-    <button class="btn add-toggle" onclick="toggleForm()">+ አዲስ ምርት ለመጨመር</button>
+    <button class="btn add-toggle" onclick="toggleForm()">+ አዲስ ምርት በፎቶ ይጨምሩ</button>
     
     <div id="adminForm" class="admin-section">
-        <h3>ምርት መመዝገቢያ</h3>
-        <input type="text" id="pName" placeholder="የምርት ስም (ለምሳሌ፡ በግ)">
+        <h3>የምርት መረጃ ያስገቡ</h3>
+        <input type="text" id="pName" placeholder="የምርት ስም (ለምሳሌ፡ የደጋ በግ)">
         <input type="number" id="pPrice" placeholder="ዋጋ (ብር)">
         <input type="text" id="pPhone" placeholder="የሻጭ ስልክ ቁጥር">
-        <button class="btn" onclick="addProduct()">ገበያ ላይ ይውጣ</button>
+        <p style="text-align: left; font-size: 14px; color: #666; margin-bottom: 5px;">የምርቱን ፎቶ ይምረጡ፡</p>
+        <input type="file" id="pImage" accept="image/*">
+        
+        <div id="loadingMsg" class="loader">ፎቶው እየተዘጋጀ ነው... ይቆዩ...</div>
+        <button class="btn" id="submitBtn" onclick="addProduct()">ገበያ ላይ ይውጣ</button>
     </div>
 
-    <div class="product-grid" id="productGrid"></div>
+    <div class="product-grid" id="productGrid">
+        <!-- ምርቶች እዚህ ይታያሉ -->
+    </div>
 </div>
 
 <script>
+    // 1. Firebase Configuration (ያንተ ቁልፎች ናቸው)
     const firebaseConfig = {
         apiKey: "AIzaSyAVn2jp_TR6Wjq1i_i5Xmk1Q6ea96KHMIQ",
         authDomain: "sayint-gebaye.firebaseapp.com",
@@ -62,22 +76,42 @@
         form.style.display = form.style.display === 'none' ? 'block' : 'none';
     }
 
-    function addProduct() {
+    // ፎቶውን ወደ ጽሁፍ (Base64) የመቀየር ሂደት
+    async function addProduct() {
         const name = document.getElementById('pName').value;
         const price = document.getElementById('pPrice').value;
         const phone = document.getElementById('pPhone').value;
-        const img = "https://images.unsplash.com/photo-1511117833452-1811aa656c7d?w=500";
+        const imageFile = document.getElementById('pImage').files[0];
+        const submitBtn = document.getElementById('submitBtn');
+        const loader = document.getElementById('loadingMsg');
 
-        if(name && price && phone) {
-            database.ref('products').push({ name, price, phone, img });
-            alert("ምርቱ በትክክል ገብቷል!");
-            toggleForm();
-            document.getElementById('pName').value = "";
-            document.getElementById('pPrice').value = "";
-            document.getElementById('pPhone').value = "";
+        if(!name || !price || !phone || !imageFile) {
+            alert("እባክዎ ሁሉንም መረጃዎች እና ፎቶውን ያሟሉ!");
+            return;
         }
+
+        submitBtn.disabled = true;
+        loader.style.display = "block";
+
+        const reader = new FileReader();
+        reader.readAsDataURL(imageFile);
+        reader.onload = function () {
+            const base64Image = reader.result;
+            
+            // ወደ Firebase መላክ
+            database.ref('products').push({
+                name: name,
+                price: price,
+                phone: phone,
+                img: base64Image // እውነተኛው ፎቶ እዚህ ይሄዳል
+            }).then(() => {
+                alert("ምርቱ ከፎቶው ጋር ገብቷል!");
+                location.reload(); // ገጹን አድስ
+            });
+        };
     }
 
+    // ከ Firebase አምጥቶ ማሳየት
     database.ref('products').on('value', (snapshot) => {
         const grid = document.getElementById('productGrid');
         grid.innerHTML = "";
@@ -89,9 +123,11 @@
                     <h3>${p.name}</h3>
                     <p class="price">${p.price} ብር</p>
                     <a href="tel:${p.phone}" class="call-btn">ደውለው ይዘዙ</a>
-                </div>`;
+                </div>
+            `;
         });
     });
 </script>
+
 </body>
 </html>
