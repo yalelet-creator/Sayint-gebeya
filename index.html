@@ -3,61 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ሳይንት ገበያ | ፎቶ ያለው እውነተኛ ገበያ</title>
+    <title>ሳይንት ገበያ | በአምሐራ ሳይንት የቀረበ</title>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
     <style>
-        :root { --primary: #27ae60; --secondary: #e67e22; --light: #f4f4f9; }
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; background-color: var(--light); color: #333; }
-        header { background: var(--primary); color: white; padding: 25px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .container { max-width: 1100px; margin: auto; padding: 20px; }
+        :root { --primary: #27ae60; --secondary: #e67e22; --dark: #2c3e50; --light: #f4f7f6; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; background: var(--light); color: var(--dark); }
+        header { background: var(--primary); color: white; padding: 30px 15px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-bottom: 5px solid var(--secondary); }
+        .container { max-width: 1200px; margin: auto; padding: 20px; }
         
-        .admin-section { background: white; padding: 25px; border-radius: 20px; margin-bottom: 30px; border: 1px solid #ddd; display: none; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-        .admin-section h3 { color: var(--primary); margin-top: 0; }
-        input[type="text"], input[type="number"], input[type="file"] { width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 10px; border: 1px solid #ccc; box-sizing: border-box; }
+        /* ፎርም እና መፈለጊያ */
+        .controls { display: flex; flex-direction: column; gap: 15px; background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 30px; }
+        input { padding: 14px; border: 2px solid #eee; border-radius: 12px; font-size: 16px; transition: 0.3s; outline: none; }
+        input:focus { border-color: var(--primary); }
+        .btn { background: var(--primary); color: white; border: none; padding: 15px; border-radius: 12px; cursor: pointer; font-weight: bold; font-size: 18px; }
+        .btn-add { background: var(--secondary); margin-bottom: 10px; }
         
-        .btn { background: var(--primary); color: white; border: none; padding: 15px; border-radius: 12px; cursor: pointer; width: 100%; font-weight: bold; font-size: 17px; transition: 0.3s; }
-        .btn:hover { background: #219150; transform: scale(1.02); }
-        .add-toggle { background: var(--secondary); margin-bottom: 25px; }
-
-        .product-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; }
-        .product-card { background: white; padding: 15px; border-radius: 20px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); text-align: center; overflow: hidden; }
-        .product-card img { width: 100%; height: 220px; object-fit: cover; border-radius: 15px; margin-bottom: 15px; }
-        .price { color: var(--secondary); font-size: 26px; font-weight: bold; margin: 10px 0; }
-        .call-btn { background: var(--primary); color: white; padding: 14px; display: block; text-decoration: none; border-radius: 12px; font-weight: bold; font-size: 16px; }
+        /* ምርቶች */
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; }
+        .product-card { background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 20px rgba(0,0,0,0.05); transition: 0.3s; position: relative; }
+        .product-card:hover { transform: translateY(-8px); }
+        .product-card img { width: 100%; height: 250px; object-fit: cover; }
+        .product-info { padding: 20px; text-align: center; }
+        .product-info h3 { margin: 0; color: var(--dark); font-size: 22px; }
+        .price { color: var(--secondary); font-size: 28px; font-weight: bold; margin: 10px 0; }
+        .call-btn { background: var(--primary); color: white; padding: 15px; display: block; text-decoration: none; border-radius: 12px; font-weight: bold; font-size: 18px; }
+        .delete-btn { position: absolute; top: 10px; right: 10px; background: rgba(231, 76, 60, 0.8); color: white; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 12px; }
         
-        .loader { display: none; color: #3498db; font-weight: bold; margin-bottom: 10px; }
+        #adminForm { display: none; }
+        .loading { display: none; color: var(--primary); font-weight: bold; margin-bottom: 10px; }
     </style>
 </head>
 <body>
 
 <header>
     <h1>ሳይንት ገበያ (Sayint Gebeya)</h1>
-    <p>የአምሐራ ሳይንት ዲጂታል የገበያ መረብ - በያለለት የተገነባ</p>
+    <p>የአምሐራ ሳይንት የዲጂታል ገበያ ማዕከል - በያለለት የተገነባ</p>
 </header>
 
 <div class="container">
-    <button class="btn add-toggle" onclick="toggleForm()">+ አዲስ ምርት በፎቶ ይጨምሩ</button>
-    
-    <div id="adminForm" class="admin-section">
-        <h3>የምርት መረጃ ያስገቡ</h3>
-        <input type="text" id="pName" placeholder="የምርት ስም (ለምሳሌ፡ የደጋ በግ)">
-        <input type="number" id="pPrice" placeholder="ዋጋ (ብር)">
-        <input type="text" id="pPhone" placeholder="የሻጭ ስልክ ቁጥር">
-        <p style="text-align: left; font-size: 14px; color: #666; margin-bottom: 5px;">የምርቱን ፎቶ ይምረጡ፡</p>
-        <input type="file" id="pImage" accept="image/*">
+    <div class="controls">
+        <input type="text" id="searchBar" onkeyup="searchProducts()" placeholder="የሚፈልጉትን ምርት እዚህ ይፈልጉ (ለምሳሌ፡ በግ)...">
+        <button class="btn btn-add" onclick="toggleForm()">+ አዲስ ምርት ይጨምሩ</button>
         
-        <div id="loadingMsg" class="loader">ፎቶው እየተዘጋጀ ነው... ይቆዩ...</div>
-        <button class="btn" id="submitBtn" onclick="addProduct()">ገበያ ላይ ይውጣ</button>
+        <div id="adminForm">
+            <input type="text" id="pName" placeholder="የምርት ስም">
+            <input type="number" id="pPrice" placeholder="ዋጋ (ብር)">
+            <input type="text" id="pPhone" placeholder="የሻጭ ስልክ">
+            <input type="file" id="pImage" accept="image/*">
+            <div id="loader" class="loading">ፎቶው እየተጫነ ነው...</div>
+            <button class="btn" id="submitBtn" onclick="addProduct()">ገበያ ላይ ይውጣ</button>
+        </div>
     </div>
 
-    <div class="product-grid" id="productGrid">
-        <!-- ምርቶች እዚህ ይታያሉ -->
-    </div>
+    <div class="product-grid" id="productGrid"></div>
 </div>
 
 <script>
-    // 1. Firebase Configuration (ያንተ ቁልፎች ናቸው)
     const firebaseConfig = {
         apiKey: "AIzaSyAVn2jp_TR6Wjq1i_i5Xmk1Q6ea96KHMIQ",
         authDomain: "sayint-gebaye.firebaseapp.com",
@@ -70,64 +72,70 @@
 
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
+    let allProducts = [];
 
     function toggleForm() {
         const form = document.getElementById('adminForm');
         form.style.display = form.style.display === 'none' ? 'block' : 'none';
     }
 
-    // ፎቶውን ወደ ጽሁፍ (Base64) የመቀየር ሂደት
-    async function addProduct() {
+    function addProduct() {
         const name = document.getElementById('pName').value;
         const price = document.getElementById('pPrice').value;
         const phone = document.getElementById('pPhone').value;
         const imageFile = document.getElementById('pImage').files[0];
-        const submitBtn = document.getElementById('submitBtn');
-        const loader = document.getElementById('loadingMsg');
+        const loader = document.getElementById('loader');
 
-        if(!name || !price || !phone || !imageFile) {
-            alert("እባክዎ ሁሉንም መረጃዎች እና ፎቶውን ያሟሉ!");
-            return;
-        }
+        if(!name || !price || !phone || !imageFile) { alert("መረጃ ያሟሉ!"); return; }
 
-        submitBtn.disabled = true;
         loader.style.display = "block";
-
         const reader = new FileReader();
         reader.readAsDataURL(imageFile);
         reader.onload = function () {
-            const base64Image = reader.result;
-            
-            // ወደ Firebase መላክ
-            database.ref('products').push({
-                name: name,
-                price: price,
-                phone: phone,
-                img: base64Image // እውነተኛው ፎቶ እዚህ ይሄዳል
-            }).then(() => {
-                alert("ምርቱ ከፎቶው ጋር ገብቷል!");
-                location.reload(); // ገጹን አድስ
+            database.ref('products').push({ name, price, phone, img: reader.result }).then(() => {
+                location.reload();
             });
         };
     }
 
-    // ከ Firebase አምጥቶ ማሳየት
     database.ref('products').on('value', (snapshot) => {
+        allProducts = [];
+        snapshot.forEach(child => {
+            let data = child.val();
+            data.id = child.key; // መለያ ቁጥር
+            allProducts.push(data);
+        });
+        displayProducts(allProducts);
+    });
+
+    function displayProducts(items) {
         const grid = document.getElementById('productGrid');
         grid.innerHTML = "";
-        snapshot.forEach((childSnapshot) => {
-            const p = childSnapshot.val();
+        items.forEach((p) => {
             grid.innerHTML += `
                 <div class="product-card">
+                    <button class="delete-btn" onclick="deleteItem('${p.id}')">X አጥፋ</button>
                     <img src="${p.img}" alt="product">
-                    <h3>${p.name}</h3>
-                    <p class="price">${p.price} ብር</p>
-                    <a href="tel:${p.phone}" class="call-btn">ደውለው ይዘዙ</a>
-                </div>
-            `;
+                    <div class="product-info">
+                        <h3>${p.name}</h3>
+                        <p class="price">${Number(p.price).toLocaleString()} ብር</p>
+                        <a href="tel:${p.phone}" class="call-btn">ደውለው ይዘዙ</a>
+                    </div>
+                </div>`;
         });
-    });
-</script>
+    }
 
+    function searchProducts() {
+        const term = document.getElementById('searchBar').value.toLowerCase();
+        const filtered = allProducts.filter(p => p.name.toLowerCase().includes(term));
+        displayProducts(filtered);
+    }
+
+    function deleteItem(id) {
+        if(confirm("ይህ ምርት ከገበያ ይውጣ?")) {
+            database.ref('products/' + id).remove();
+        }
+    }
+</script>
 </body>
 </html>
