@@ -3,82 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ሳይንት ገበያ | የደረሰኝ ማረጋገጫ ያለው</title>
+    <title>ሳይንት ገበያ | Sayint Gebeya Official</title>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
     <style>
-        :root { --primary: #2ecc71; --secondary: #f39c12; --dark: #2c3e50; --light: #f4f7f6; --blue: #3498db; --danger: #e74c3c; }
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; margin: 0; background: #f4f7f6; color: var(--dark); }
-        header { background: var(--primary); color: white; padding: 30px; text-align: center; border-bottom: 6px solid var(--secondary); }
+        :root { --primary: #2ecc71; --secondary: #f39c12; --dark: #2c3e50; --light: #f8f9fa; --accent: #3498db; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; background: var(--light); color: var(--dark); }
+        header { background: var(--primary); color: white; padding: 40px 15px; text-align: center; border-bottom: 6px solid var(--secondary); box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         .container { max-width: 1200px; margin: auto; padding: 20px; }
         
-        /* Product Design */
-        .product-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; }
-        .product-card { background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 20px rgba(0,0,0,0.05); text-align: center; padding-bottom: 20px; }
-        .product-card img { width: 100%; height: 200px; object-fit: cover; }
-        .price { color: var(--secondary); font-size: 24px; font-weight: bold; margin: 10px 0; }
+        .card { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 30px; border: 1px solid #eee; }
+        .search-box { display: flex; gap: 10px; margin-bottom: 20px; }
+        input, select, textarea { padding: 14px; border: 1px solid #ddd; border-radius: 12px; font-size: 16px; width: 100%; box-sizing: border-box; outline: none; transition: 0.3s; }
+        input:focus { border-color: var(--primary); box-shadow: 0 0 10px rgba(46, 204, 113, 0.2); }
         
-        .btn { padding: 12px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; color: white; width: 45%; }
-        .btn-call { background: var(--primary); }
-        .btn-pay { background: var(--blue); }
+        .btn { background: var(--primary); color: white; border: none; padding: 16px; border-radius: 12px; cursor: pointer; font-weight: bold; font-size: 18px; transition: 0.3s; }
+        .btn:hover { transform: scale(1.02); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .btn-add { background: var(--secondary); margin-bottom: 10px; }
+        
+        #adminForm { display: none; background: #fffcf4; padding: 25px; border-radius: 20px; border: 2px dashed var(--secondary); margin-top: 15px; }
+
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; }
+        .product-card { background: white; border-radius: 25px; overflow: hidden; box-shadow: 0 10px 20px rgba(0,0,0,0.05); position: relative; }
+        .product-card img { width: 100%; height: 250px; object-fit: cover; }
+        
+        .badge { position: absolute; top: 15px; left: 15px; background: var(--secondary); color: white; padding: 5px 15px; border-radius: 20px; font-weight: bold; font-size: 12px; }
+        .time { position: absolute; top: 15px; right: 15px; background: rgba(0,0,0,0.6); color: white; padding: 5px 10px; border-radius: 20px; font-size: 10px; }
+        
+        .product-info { padding: 20px; }
+        .price { color: var(--secondary); font-size: 28px; font-weight: bold; margin: 5px 0; }
+        .loc { color: #7f8c8d; font-size: 14px; margin-bottom: 15px; }
+        
+        .btn-group { display: flex; gap: 10px; margin-top: 15px; }
+        .btn-call { flex: 1; background: var(--primary); text-decoration: none; color: white; text-align: center; padding: 12px; border-radius: 10px; font-weight: bold; }
+        .btn-pay { flex: 1; background: var(--accent); color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; }
 
         /* Modal */
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); }
-        .modal-content { background: white; margin: 10% auto; padding: 25px; border-radius: 20px; width: 90%; max-width: 400px; text-align: center; }
-        
-        /* Receipt View Section */
-        #receiptSection { display: none; margin-top: 50px; background: #fff; padding: 20px; border-radius: 20px; border: 2px solid var(--blue); }
-        .receipt-card { border: 1px solid #ddd; padding: 10px; margin-bottom: 10px; border-radius: 10px; }
-        .receipt-card img { width: 100px; cursor: pointer; }
+        .modal-content { background: white; margin: 15% auto; padding: 30px; border-radius: 25px; width: 85%; max-width: 400px; text-align: center; }
     </style>
 </head>
 <body>
 
 <header>
     <h1>ሳይንት ገበያ (Sayint Gebeya)</h1>
-    <p>የአምሐራ ሳይንት ዲጂታል የገበያ መረብ</p>
+    <p>የአምሐራ ሳይንት ዲጂታል ንግድ ማዕከል | በያለለት መለካሙ የተገነባ</p>
 </header>
 
 <div class="container">
-    <button onclick="toggleAdmin()" style="background:var(--dark); color:white; padding:10px; border-radius:5px; margin-bottom:20px;">ምርት ጨምር / ደረሰኝ እይ</button>
-    
-    <!-- Admin View -->
-    <div id="adminPanel" style="display:none; background:white; padding:20px; border-radius:15px; margin-bottom:20px;">
-        <h3>አዲስ ምርት መመዝገቢያ</h3>
-        <input type="text" id="pName" placeholder="የምርት ስም" style="width:100%; padding:10px; margin-bottom:10px;">
-        <input type="number" id="pPrice" placeholder="ዋጋ" style="width:100%; padding:10px; margin-bottom:10px;">
-        <input type="text" id="pBank" placeholder="የባንክ አካውንት" style="width:100%; padding:10px; margin-bottom:10px;">
-        <input type="file" id="pImage" style="width:100%; margin-bottom:10px;">
-        <button onclick="addProduct()" style="width:100%; background:var(--secondary); color:white; padding:10px; border:none; border-radius:5px;">ገበያ ላይ ይውጣ</button>
+    <div class="card">
+        <div class="search-box">
+            <input type="text" id="searchBar" onkeyup="searchProducts()" placeholder="የሚፈልጉትን ምርት እዚህ ይፈልጉ...">
+        </div>
+        <button class="btn btn-add" onclick="toggleForm()">+ አዲስ ምርት ይጨምሩ</button>
         
-        <hr>
-        <button onclick="showReceipts()" style="width:100%; background:var(--blue); color:white; padding:10px; border:none; border-radius:5px; margin-top:10px;">የገቡ ደረሰኞችን እይ</button>
+        <div id="adminForm">
+            <input type="text" id="pName" placeholder="የምርት ስም">
+            <input type="number" id="pPrice" placeholder="ዋጋ (ብር)">
+            <input type="text" id="pSeller" placeholder="የሻጭ ስም">
+            <input type="text" id="pPhone" placeholder="ስልክ ቁጥር">
+            <input type="text" id="pBank" placeholder="የባንክ/ቴሌብር መረጃ">
+            <input type="text" id="pLoc" placeholder="ያለበት ቀበሌ/መንደር">
+            <textarea id="pDesc" placeholder="ስለ ምርቱ ዝርዝር መግለጫ ይጻፉ..."></textarea>
+            <input type="file" id="pImage" accept="image/*">
+            <button class="btn" onclick="addProduct()">ገበያ ላይ ይውጣ</button>
+        </div>
     </div>
 
     <div class="product-grid" id="productGrid"></div>
-
-    <!-- Receipts Display -->
-    <div id="receiptSection">
-        <h3>የደረሰኞች ማከማቻ</h3>
-        <div id="receiptList"></div>
-    </div>
 </div>
 
-<!-- Pay Modal -->
 <div id="payModal" class="modal">
     <div class="modal-content">
-        <h2 style="color:var(--blue)">ክፍያ ይፈጽሙ</h2>
-        <p id="bankInfo" style="font-weight:bold; font-size:18px;"></p>
-        <hr>
-        <p>የከፈሉበትን ደረሰኝ (Screenshot) እዚህ ይላኩ፦</p>
-        <input type="file" id="receiptImg" style="margin-bottom:10px;">
-        <button onclick="sendReceipt()" style="background:var(--blue); color:white; width:100%; padding:10px; border:none; border-radius:5px;">ደረሰኝ ላክ</button>
-        <button onclick="closeModal()" style="margin-top:10px; background:#ddd; border:none; padding:5px 10px;">ዝጋ</button>
+        <h2 style="color:var(--accent)">የክፍያ መረጃ</h2>
+        <p id="bankDetails" style="font-size: 20px; font-weight: bold; margin: 20px 0;"></p>
+        <p style="font-size: 13px; color: #666;">ክፍያውን ፈጽመው ደረሰኝ ይላኩ።</p>
+        <input type="file" id="receiptImg" style="margin: 15px 0;">
+        <button class="btn" style="background:var(--accent)" onclick="sendReceipt()">ደረሰኝ ላክ</button>
+        <button onclick="closeModal()" style="background:none; border:none; color:red; margin-top:15px; cursor:pointer;">ዝጋ</button>
     </div>
 </div>
 
 <script>
-    // Firebase Config (Keep yours)
     const firebaseConfig = {
         apiKey: "AIzaSyAVn2jp_TR6Wjq1i_i5Xmk1Q6ea96KHMIQ",
         authDomain: "sayint-gebaye.firebaseapp.com",
@@ -91,23 +97,33 @@
 
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
-    let currentProductName = "";
+    let currentP = "";
 
-    function toggleAdmin() {
-        const pin = prompt("ሚስጥራዊ ቁጥር (PIN) ያስገቡ፦");
-        if(pin === "2024") { document.getElementById('adminPanel').style.display = "block"; }
+    function toggleForm() {
+        const f = document.getElementById('adminForm');
+        f.style.display = f.style.display === 'none' ? 'block' : 'none';
     }
 
     function addProduct() {
         const name = document.getElementById('pName').value;
         const price = document.getElementById('pPrice').value;
+        const phone = document.getElementById('pPhone').value;
         const bank = document.getElementById('pBank').value;
-        const file = document.getElementById('pImage').files[0];
+        const imgFile = document.getElementById('pImage').files[0];
+
+        if(!name || !price || !phone || !imgFile) { alert("መረጃ ያሟሉ!"); return; }
+
         const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => {
-            db.ref('products').push({ name, price, bank, img: reader.result });
-            alert("ተሳክቷል!"); location.reload();
+        reader.readAsDataURL(imgFile);
+        reader.onload = function() {
+            db.ref('products').push({
+                name, price, phone, bank, 
+                seller: document.getElementById('pSeller').value,
+                loc: document.getElementById('pLoc').value,
+                desc: document.getElementById('pDesc').value,
+                img: reader.result,
+                time: new Date().toLocaleString('am-ET')
+            }).then(() => location.reload());
         };
     }
 
@@ -118,56 +134,46 @@
             const p = child.val();
             grid.innerHTML += `
                 <div class="product-card">
+                    <span class="time">${p.time}</span>
                     <img src="${p.img}">
-                    <h3>${p.name}</h3>
-                    <p class="price">${p.price} ብር</p>
-                    <button class="btn btn-call" onclick="window.location.href='tel:09...'">ደውል</button>
-                    <button class="btn btn-pay" onclick="openPay('${p.name}', '${p.bank}')">ክፈል</button>
+                    <div class="product-info">
+                        <h3>${p.name}</h3>
+                        <p class="price">${Number(p.price).toLocaleString()} ብር</p>
+                        <p class="loc">📍 ${p.loc} | 👤 ${p.seller}</p>
+                        <div class="btn-group">
+                            <a href="tel:${p.phone}" class="btn-call">ደውል</a>
+                            <button class="btn-pay" onclick="openPay('${p.name}', '${p.bank}')">ክፈል</button>
+                        </div>
+                    </div>
                 </div>`;
         });
     });
 
     function openPay(name, bank) {
-        currentProductName = name;
-        document.getElementById('bankInfo').innerText = bank;
+        currentP = name;
+        document.getElementById('bankDetails').innerText = bank;
         document.getElementById('payModal').style.display = "block";
     }
 
     function sendReceipt() {
         const file = document.getElementById('receiptImg').files[0];
-        if(!file) { alert("ፎቶ ይምረጡ"); return; }
+        if(!file) return;
         const reader = new FileReader();
         reader.readAsDataURL(file);
         reader.onload = () => {
-            db.ref('receipts').push({
-                product: currentProductName,
-                img: reader.result,
-                time: new Date().toLocaleString()
-            });
-            alert("ደረሰኝ ተልኳል! ሻጩ ያረጋግጣል።");
-            closeModal();
+            db.ref('receipts').push({ product: currentP, img: reader.result, time: new Date().toLocaleString() });
+            alert("ደረሰኝ ተልኳል!"); closeModal();
         };
     }
 
-    function showReceipts() {
-        document.getElementById('receiptSection').style.display = "block";
-        db.ref('receipts').on('value', snap => {
-            const list = document.getElementById('receiptList');
-            list.innerHTML = "";
-            snap.forEach(child => {
-                const r = child.val();
-                list.innerHTML += `
-                    <div class="receipt-card">
-                        <p>ምርት፦ ${r.product}</p>
-                        <p>ሰዓት፦ ${r.time}</p>
-                        <img src="${r.img}" onclick="window.open(this.src)">
-                    </div>`;
-            });
+    function closeModal() { document.getElementById('payModal').style.display = "none"; }
+    function searchProducts() {
+        const term = document.getElementById('searchBar').value.toLowerCase();
+        document.querySelectorAll('.product-card').forEach(card => {
+            const name = card.querySelector('h3').innerText.toLowerCase();
+            card.style.display = name.includes(term) ? "block" : "none";
         });
     }
-
-    function closeModal() { document.getElementById('payModal').style.display = "none"; }
 </script>
-
 </body>
 </html>
