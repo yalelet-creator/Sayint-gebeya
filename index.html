@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ሳይንት ገበያ ሜጋ ፕሮ | Sayint Gebeya Ultimate</title>
+    <title>ሳይንት ገበያ ፕሮ ማክስ | Sayint Gebeya Ultimate Edition</title>
     
-    <!-- Firebase & FontAwesome Icons -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -13,158 +12,130 @@
     <style>
         :root { 
             --primary: #2ecc71; --secondary: #f39c12; --accent: #3498db; 
-            --danger: #e74c3c; --bg: #f0f2f5; --card: #ffffff; --text: #333; 
-            --gray: #95a5a6; --telegram: #0088cc;
+            --danger: #e74c3c; --bg: #f0f2f5; --card: #ffffff; --text: #333; --gray: #95a5a6;
         }
+        .dark-mode { --bg: #121212; --card: #1e1e1e; --text: #e0e0e0; }
         
-        .dark-mode { 
-            --bg: #121212; --card: #1e1e1e; --text: #e0e0e0; 
-        }
-
-        body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; background: var(--bg); color: var(--text); transition: 0.3s; padding-bottom: 50px; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); color: var(--text); transition: 0.3s; padding-bottom: 50px; }
         
         header { 
             background: linear-gradient(135deg, var(--primary), #27ae60); color: white; 
             padding: 50px 20px; text-align: center; border-bottom: 5px solid var(--secondary);
-            clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
+            clip-path: polygon(0 0, 100% 0, 100% 90%, 0 100%);
         }
 
-        /* Top Navigation */
-        .top-nav { position: fixed; top: 15px; right: 15px; z-index: 1000; display: flex; gap: 10px; }
-        .nav-circle { background: var(--card); border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: center; color: var(--text); font-size: 18px; }
-
         .container { max-width: 1200px; margin: auto; padding: 20px; }
+        .card { background: var(--card); padding: 25px; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 20px; }
         
-        /* Controls Section */
-        .controls-card { background: var(--card); padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 30px; }
-        input, select, textarea { padding: 12px; border: 1px solid #ddd; border-radius: 12px; font-size: 15px; width: 100%; box-sizing: border-box; outline: none; margin-bottom: 10px; background: var(--card); color: var(--text); }
-        input:focus { border-color: var(--primary); }
-        
-        .btn { background: var(--primary); color: white; border: none; padding: 15px; border-radius: 12px; cursor: pointer; font-weight: bold; font-size: 16px; width: 100%; transition: 0.3s; }
-        .btn-add { background: var(--secondary); margin-bottom: 10px; }
-        #adminForm { display: none; background: rgba(0,0,0,0.02); padding: 20px; border-radius: 15px; border: 2px dashed var(--secondary); margin-top: 15px; }
-
-        /* Advanced Filtering Tabs */
+        /* Filtering & Search */
         .filter-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px; }
-        .filter-btn { padding: 8px 16px; border-radius: 30px; border: 1px solid var(--primary); background: none; color: var(--text); cursor: pointer; font-weight: bold; font-size: 13px; }
+        .filter-btn { padding: 10px 20px; border-radius: 30px; border: 1px solid var(--primary); background: none; color: var(--text); cursor: pointer; font-weight: bold; }
         .filter-btn.active { background: var(--primary); color: white; }
 
+        input, select, textarea { 
+            width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 12px; 
+            margin-bottom: 10px; background: var(--card); color: var(--text); outline: none; box-sizing: border-box;
+        }
+
+        .btn { background: var(--primary); color: white; border: none; padding: 15px; border-radius: 12px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.3s; }
+        .btn-add { background: var(--secondary); margin-bottom: 10px; }
+
         /* Product Cards */
-        .product-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; }
-        .product-card { background: var(--card); border-radius: 25px; overflow: hidden; box-shadow: 0 10px 20px rgba(0,0,0,0.05); position: relative; transition: 0.3s; }
-        .product-card.is-sold { opacity: 0.6; filter: grayscale(0.5); }
-        .product-card img { width: 100%; height: 250px; object-fit: cover; cursor: pointer; }
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px; }
+        .product-card { background: var(--card); border-radius: 30px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.05); position: relative; transition: 0.3s; }
+        .product-card.sold { opacity: 0.6; filter: grayscale(0.7); }
+        .product-card img { width: 100%; height: 280px; object-fit: cover; cursor: pointer; }
         
         .badge-sold { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-15deg); background: var(--danger); color: white; padding: 10px 30px; border-radius: 10px; font-size: 24px; font-weight: bold; border: 4px solid white; z-index: 20; display: none; }
-        .product-card.is-sold .badge-sold { display: block; }
-        
-        .verified-badge { position: absolute; top: 15px; left: 15px; background: white; color: var(--accent); padding: 4px 10px; border-radius: 20px; font-weight: bold; font-size: 11px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
-        
-        /* Stats Row */
-        .stats-row { position: absolute; top: 15px; right: 15px; display: flex; gap: 5px; z-index: 10; }
-        .stat-badge { background: rgba(0,0,0,0.6); color: white; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; }
-        
+        .product-card.sold .badge-sold { display: block; }
+
+        .verified { position: absolute; top: 15px; left: 15px; background: white; color: var(--accent); padding: 5px 12px; border-radius: 20px; font-weight: bold; font-size: 11px; box-shadow: 0 5px 10px rgba(0,0,0,0.1); }
+        .views-badge { position: absolute; top: 15px; right: 15px; background: rgba(0,0,0,0.6); color: white; padding: 4px 10px; border-radius: 20px; font-size: 11px; }
+
         .product-info { padding: 20px; }
-        .price { color: var(--secondary); font-size: 28px; font-weight: 900; margin: 5px 0; }
-        .loc-info { font-size: 12px; color: var(--gray); margin-bottom: 10px; }
+        .price { color: var(--secondary); font-size: 32px; font-weight: 900; margin: 10px 0; }
         
-        /* Like/Dislike Row */
-        .vote-row { display: flex; justify-content: space-around; margin: 10px 0; padding: 5px 0; border-top: 1px solid #eee; border-bottom: 1px solid #eee; }
-        .vote-btn { background: none; border: none; cursor: pointer; font-size: 16px; display: flex; align-items: center; gap: 5px; color: var(--text); }
+        /* Interaction Row */
+        .vote-row { display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #eee; border-bottom: 1px solid #eee; margin-bottom: 15px; }
+        .vote-btn { background: none; border: none; cursor: pointer; font-size: 16px; color: var(--text); display: flex; align-items: center; gap: 5px; }
+
+        .action-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
+        .act-btn { padding: 12px; border-radius: 12px; text-decoration: none; text-align: center; color: white; font-weight: bold; font-size: 14px; border: none; cursor: pointer; }
+
+        /* Comments */
+        .comment-box { background: rgba(0,0,0,0.03); padding: 15px; border-radius: 20px; margin-top: 15px; text-align: left; }
+        .comm-list { max-height: 80px; overflow-y: auto; font-size: 12px; margin-bottom: 10px; }
+        .comm-item { background: var(--card); padding: 6px; border-radius: 8px; margin-bottom: 5px; border-left: 3px solid var(--accent); }
+
+        .admin-box { margin-top: 15px; border-top: 1px dashed #ddd; padding-top: 10px; display: flex; gap: 10px; }
+        .btn-sm { flex: 1; padding: 8px; border-radius: 10px; border: none; font-size: 10px; cursor: pointer; color: white; font-weight: bold; }
+
+        /* Theme Toggle */
+        .theme-btn { position: fixed; top: 15px; right: 15px; z-index: 1000; background: var(--card); border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); color: var(--text); }
         
-        /* Buttons */
-        .btn-group { display: flex; gap: 10px; margin-top: 10px; }
-        .btn-call { flex: 1; background: var(--primary); text-decoration: none; color: white; text-align: center; padding: 12px; border-radius: 10px; font-weight: bold; font-size: 14px; }
-        .btn-pay { flex: 1; background: var(--accent); color: white; border: none; border-radius: 10px; font-weight: bold; font-size: 14px; cursor: pointer; }
-        .btn-share { background: var(--telegram); color: white; padding: 10px; display: block; text-decoration: none; border-radius: 10px; font-weight: bold; text-align: center; margin-top: 10px; font-size: 14px; }
-
-        /* Comment System */
-        .comment-section { background: rgba(0,0,0,0.03); padding: 12px; border-radius: 15px; margin-top: 15px; text-align: left; }
-        .comment-list { max-height: 80px; overflow-y: auto; font-size: 12px; margin-bottom: 8px; }
-        .single-comment { margin-bottom: 4px; padding: 5px; background: var(--card); border-radius: 5px; border-left: 3px solid var(--accent); }
-        .comment-input-row { display: flex; gap: 5px; }
-        .comment-input-row input { margin-bottom: 0; padding: 6px; font-size: 12px; }
-        .btn-send { width: 50px; background: var(--accent); color: white; border: none; border-radius: 8px; cursor: pointer; }
-
-        /* Admin Actions */
-        .admin-actions { margin-top: 10px; padding-top: 10px; border-top: 1px solid #eee; display: flex; gap: 8px; }
-        .btn-sm { flex: 1; padding: 6px; border-radius: 8px; border: none; font-size: 10px; cursor: pointer; font-weight: bold; }
-
-        /* Modals */
         .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); }
         .modal-content { background: var(--card); margin: 15% auto; padding: 30px; border-radius: 25px; width: 85%; max-width: 400px; text-align: center; }
     </style>
 </head>
 <body id="body">
 
-<!-- Dark Mode Button -->
-<div class="top-nav">
-    <button class="nav-circle" onclick="toggleTheme()"><i class="fas fa-moon"></i></button>
-</div>
+<button class="theme-btn" onclick="toggleTheme()"><i class="fas fa-moon"></i></button>
 
 <header>
-    <h1>ሳይንት ገበያ ፕሮፌሽናል</h1>
-    <p>የአምሐራ ሳይንት ዲጂታል የገበያ ማዕከል | በያለለት የተገነባ</p>
+    <h1>ሳይንት ገበያ ፕሮ ማክስ</h1>
+    <p>የአምሐራ ሳይንት የንግድና የቴክኖሎጂ ማዕከል | በያለለት መለካሙ የተገነባ</p>
 </header>
 
 <div class="container">
-    <div class="controls-card">
-        <!-- የላቀ ፍለጋ -->
-        <input type="text" id="searchBar" onkeyup="filterItems()" placeholder="የሚፈልጉትን ምርት እዚህ ይፈልጉ...">
-        
+    <div class="card">
+        <input type="text" id="searchBox" onkeyup="filterItems()" placeholder="ምርት ይፈልጉ...">
         <div class="filter-row">
-            <button class="filter-btn active" onclick="setCategory('')">ሁሉም</button>
-            <button class="filter-btn" onclick="setCategory('እህል')">እህል</button>
-            <button class="filter-btn" onclick="setCategory('ከብት')">ከብት</button>
-            <button class="filter-btn" onclick="setCategory('ማር')">ማር</button>
-            <select id="sortPrice" onchange="filterItems()" style="width: auto; margin-bottom: 0; padding: 5px;">
+            <button class="filter-btn active" onclick="setCategory('', event)">ሁሉም</button>
+            <button class="filter-btn" onclick="setCategory('እህል', event)">እህል</button>
+            <button class="filter-btn" onclick="setCategory('ከብት', event)">ከብት</button>
+            <button class="filter-btn" onclick="setCategory('ማር', event)">ማር</button>
+            <select id="sortPrice" onchange="filterItems()" style="width: auto; margin-bottom: 0;">
                 <option value="new">አዲስ የተለጠፈ</option>
-                <option value="low">ዋጋ፡ ከረካሽ ወደ ውድ</option>
-                <option value="high">ዋጋ፡ ከውድ ወደ ረካሽ</option>
+                <option value="low">ዋጋ፡ ከረካሽ</option>
+                <option value="high">ዋጋ፡ ከውድ</option>
             </select>
         </div>
+        <button class="btn btn-add" onclick="toggleAdmin()">+ አዲስ ምርት በዝርዝር ይጨምሩ</button>
+        <button class="btn" style="background:var(--dark); margin-top:5px;" onclick="viewReceipts()">የገቡ ደረሰኞችን እይ (Admin)</button>
 
-        <button class="btn btn-add" onclick="toggleForm()">+ አዲስ ምርት በፎቶ ይጨምሩ</button>
-        <button onclick="toggleReceipts()" style="background:var(--dark); color:white; padding:10px; border:none; border-radius:10px; width:100%; margin-top:5px; cursor:pointer; font-weight:bold;">የገቡ ደረሰኞችን እይ (Admin)</button>
-        
-        <!-- ምርት መመዝገቢያ ፎርም -->
-        <div id="adminForm">
+        <div id="adminForm" style="display:none; margin-top:20px; border-top: 1px solid #eee; padding-top:15px;">
             <input type="text" id="pName" placeholder="የምርት ስም">
             <input type="number" id="pPrice" placeholder="ዋጋ (ብር)">
-            <input type="text" id="pSeller" placeholder="የሻጭ ስም">
-            <input type="text" id="pPhone" placeholder="ስልክ ቁጥር">
-            <input type="text" id="pBank" placeholder="የባንክ/ቴሌብር መረጃ">
-            <input type="text" id="pLoc" placeholder="ያለበት ቀበሌ/መንደር">
-            <textarea id="pDesc" placeholder="ስለ ምርቱ ዝርዝር መግለጫ..."></textarea>
             <select id="pCat">
                 <option value="ሌላ">ዘርፍ ይምረጡ</option>
                 <option value="እህል">እህል</option>
                 <option value="ከብት">ከብት</option>
                 <option value="ማር">ማር</option>
             </select>
-            <p style="font-size:12px; color:gray;">የምርቱን ፎቶ ይምረጡ (በራሱ ጊዜ ያንሰዋል)፦</p>
+            <input type="text" id="pSeller" placeholder="የሻጭ ስም">
+            <input type="text" id="pPhone" placeholder="ስልክ ቁጥር">
+            <input type="text" id="pTg" placeholder="ቴሌግራም ስም (ያለ @)">
+            <input type="text" id="pBank" placeholder="የባንክ/ቴሌብር መረጃ">
+            <input type="text" id="pLoc" placeholder="የመንደር/ቀበሌ ስም">
+            <textarea id="pDesc" placeholder="ስለ ምርቱ ዝርዝር መግለጫ..."></textarea>
             <input type="file" id="pImage" accept="image/*">
-            <div id="compressing" style="display:none; color:var(--accent); font-weight:bold; margin-bottom:10px;">ፎቶው እየተዘጋጀ ነው...</div>
+            <div id="loading" style="display:none; color:var(--accent); font-weight:bold; margin-bottom:10px;">ምርቱ ለፈጣን ኢንተርኔት እየተዘጋጀ ነው...</div>
             <button class="btn" id="submitBtn" onclick="processAndAdd()">ገበያ ላይ ይውጣ</button>
         </div>
     </div>
 
-    <!-- የደረሰኞች ክፍል -->
-    <div id="receiptSection" style="display:none;" class="controls-card">
+    <div id="receiptSection" style="display:none;" class="card">
         <h3>የደረሰኞች ማከማቻ</h3>
         <div id="receiptList"></div>
     </div>
 
-    <!-- ምርቶች የሚወጡበት -->
     <div id="productGrid" class="product-grid"></div>
 </div>
 
-<!-- Pay Modal -->
 <div id="payModal" class="modal">
     <div class="modal-content">
         <h2 style="color:var(--accent)">የክፍያ መረጃ</h2>
-        <p id="bankDetails" style="font-size: 18px; font-weight: bold; margin: 15px 0;"></p>
-        <p style="font-size: 12px; color: #666;">ደረሰኝ (Screenshot) ይላኩ፦</p>
+        <p id="bankDetails" style="font-size: 18px; font-weight: bold; margin: 20px 0;"></p>
         <input type="file" id="receiptImg">
         <button class="btn" style="background:var(--accent); margin-top:10px;" onclick="sendReceipt()">ደረሰኝ ላክ</button>
         <button onclick="closeModal()" style="background:none; border:none; color:red; margin-top:15px; cursor:pointer;">ዝጋ</button>
@@ -172,7 +143,7 @@
 </div>
 
 <script>
-    // Firebase Config (ያለለት ቁልፎች)
+    // 1. Firebase Config
     const firebaseConfig = {
         apiKey: "AIzaSyAVn2jp_TR6Wjq1i_i5Xmk1Q6ea96KHMIQ",
         authDomain: "sayint-gebaye.firebaseapp.com",
@@ -185,32 +156,26 @@
 
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
-    let currentPName = "";
     let allProducts = [];
-    let selectedCategory = "";
+    let selectedCat = "";
+    let currentP = "";
 
     function toggleTheme() { document.getElementById('body').classList.toggle('dark-mode'); }
-    
-    function toggleForm() {
-        const f = document.getElementById('adminForm');
-        f.style.display = f.style.display === 'none' ? 'block' : 'none';
-    }
-
-    function setCategory(cat) {
-        selectedCategory = cat;
-        document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-        event.target.classList.add('active');
+    function toggleAdmin() { const f = document.getElementById('adminForm'); f.style.display = f.style.display === 'none' ? 'block' : 'none'; }
+    function closeModal() { document.getElementById('payModal').style.display = "none"; }
+    function setCategory(cat, e) {
+        selectedCat = cat;
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        e.target.classList.add('active');
         filterItems();
     }
 
-    // ፎቶ የማሳነስ እና ምርት የመጨመር አስማት
-    function processAndAdd() {
-        const name = document.getElementById('pName').value;
-        const price = document.getElementById('pPrice').value;
+    // 2. Image Compression & Add Product
+    async function processAndAdd() {
         const file = document.getElementById('pImage').files[0];
-        if(!name || !price || !file) { alert("እባክዎ የምርት ስም፣ ዋጋ እና ፎቶ ያስገቡ!"); return; }
-
-        document.getElementById('compressing').style.display = "block";
+        if(!file || !document.getElementById('pName').value) { alert("መረጃ ያሟሉ!"); return; }
+        
+        document.getElementById('loading').style.display = "block";
         document.getElementById('submitBtn').disabled = true;
 
         const reader = new FileReader();
@@ -221,168 +186,128 @@
             img.onload = function() {
                 const canvas = document.createElement('canvas');
                 const MAX_WIDTH = 800;
-                let width = img.width;
-                let height = img.height;
-
-                if (width > MAX_WIDTH) {
-                    height *= MAX_WIDTH / width;
-                    width = MAX_WIDTH;
-                }
-                canvas.width = width;
-                canvas.height = height;
-                const ctx = canvas.getContext("2d");
-                ctx.drawImage(img, 0, 0, width, height);
+                let w = img.width, h = img.height;
+                if (w > MAX_WIDTH) { h *= MAX_WIDTH / w; w = MAX_WIDTH; }
+                canvas.width = w; canvas.height = h;
+                canvas.getContext("2d").drawImage(img, 0, 0, w, h);
+                const compressed = canvas.toDataURL("image/jpeg", 0.6);
                 
-                // ፎቶውን ወደ 50% ጥራት አሳንሶ ወደ Base64 መቀየር
-                const compressedBase64 = canvas.toDataURL("image/jpeg", 0.5);
-                
-                // ወደ Firebase መላክ
                 db.ref('products').push({
-                    name: name,
-                    price: Number(price),
+                    name: document.getElementById('pName').value,
+                    price: Number(document.getElementById('pPrice').value),
+                    category: document.getElementById('pCat').value,
                     seller: document.getElementById('pSeller').value,
                     phone: document.getElementById('pPhone').value,
+                    telegram: document.getElementById('pTg').value,
                     bank: document.getElementById('pBank').value,
                     loc: document.getElementById('pLoc').value,
                     desc: document.getElementById('pDesc').value,
-                    category: document.getElementById('pCat').value,
-                    img: compressedBase64,
-                    status: 'available',
-                    views: 0, likes: 0, dislikes: 0,
-                    time: Date.now(),
-                    displayTime: new Date().toLocaleString('am-ET')
+                    img: compressed,
+                    status: 'available', views: 0, likes: 0, dislikes: 0, time: Date.now()
                 }).then(() => location.reload());
             };
         };
     }
 
-    // መረጃን ማምጣት
+    // 3. Data Fetching & Rendering
     db.ref('products').on('value', snap => {
         allProducts = [];
         snap.forEach(child => {
-            let d = child.val();
-            d.id = child.key;
+            let d = child.val(); d.id = child.key;
             allProducts.push(d);
         });
         filterItems();
     });
 
-    // እውነተኛ የላቀ ፍለጋ
     function filterItems() {
-        const term = document.getElementById('searchBar').value.toLowerCase();
+        const term = document.getElementById('searchBox').value.toLowerCase();
         const sort = document.getElementById('sortPrice').value;
-
         let filtered = allProducts.filter(p => {
-            const matchName = p.name.toLowerCase().includes(term);
-            const matchCat = selectedCategory === "" || p.category === selectedCategory;
-            return matchName && matchCat;
+            return p.name.toLowerCase().includes(term) && (selectedCat === "" || p.category === selectedCat);
         });
-
-        if(sort === "low") filtered.sort((a, b) => a.price - b.price);
-        if(sort === "high") filtered.sort((a, b) => b.price - a.price);
-        if(sort === "new") filtered.sort((a, b) => b.time - a.time);
-
+        if(sort === "low") filtered.sort((a,b) => a.price - b.price);
+        if(sort === "high") filtered.sort((a,b) => b.price - a.price);
+        if(sort === "new") filtered.sort((a,b) => b.time - a.time);
         renderGrid(filtered);
     }
 
-    // ምርቶችን በገጽ ላይ ማሳየት (ሁሉንም ባህሪያት ያካተተ)
     function renderGrid(items) {
         const grid = document.getElementById('productGrid');
         grid.innerHTML = "";
         items.forEach(p => {
-            const id = p.id;
             const isSold = p.status === 'sold';
-            
-            let commHTML = "";
-            if(p.comments) Object.values(p.comments).forEach(c => commHTML += `<div class="single-comment">💬 ${c.text}</div>`);
-
-            const shareText = `የሳይንት ገበያ ምርት፡ ${p.name}\nዋጋ፡ ${p.price} ብር\nቦታ፡ ${p.loc}\nሊንክ፡ https://yalelet-creator.github.io/Sayint-gebeya/`;
-            const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent(shareText)}`;
+            let comms = "";
+            if(p.comments) Object.values(p.comments).forEach(c => comms += `<div class="comm-item">💬 ${c.text}</div>`);
 
             grid.innerHTML += `
-                <div class="product-card ${isSold ? 'is-sold' : ''}">
+                <div class="product-card ${isSold ? 'sold' : ''}">
                     <div class="verified"><i class="fas fa-check-circle"></i> የታመነ</div>
-                    <div class="stats-row">
-                        <span class="stat-badge">👁️ ${p.views || 0}</span>
-                        <span class="stat-badge" style="background:#2ecc71">👍 ${p.likes || 0}</span>
-                        <span class="stat-badge" style="background:#e74c3c">👎 ${p.dislikes || 0}</span>
-                    </div>
-                    <span class="badge-sold">ተሽጧል</span>
-                    <img src="${p.img}" onclick="incView('${id}')">
-                    
+                    <div class="views-badge">👁️ ${p.views || 0} እይታ</div>
+                    <div class="badge-sold">ተሽጧል</div>
+                    <img src="${p.img}" onclick="updateStat('${p.id}', 'views')">
                     <div class="product-info">
-                        <div style="color:var(--secondary); font-size:12px; margin-bottom:5px;">
-                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
-                        </div>
+                        <span style="font-size:10px; color:var(--primary); font-weight:bold;">${p.category}</span>
                         <h3>${p.name}</h3>
-                        <p class="price">${Number(p.price).toLocaleString()} ብር</p>
-                        <p class="loc-info">📍 ${p.loc} | 👤 ${p.seller} | 🕒 ${p.displayTime}</p>
+                        <p class="price">${p.price.toLocaleString()} ብር</p>
+                        <p style="font-size:12px; color:var(--gray)">📍 ${p.loc} | 👤 ${p.seller}</p>
                         
                         <div class="vote-row">
-                            <button class="vote-btn" onclick="vote('${id}', 'likes')">👍 ውደድ</button>
-                            <button class="vote-btn" onclick="vote('${id}', 'dislikes')">👎 አትውደድ</button>
+                            <button class="vote-btn" onclick="updateStat('${p.id}', 'likes')">👍 ${p.likes || 0}</button>
+                            <button class="vote-btn" onclick="updateStat('${p.id}', 'dislikes')">👎 ${p.dislikes || 0}</button>
                         </div>
 
-                        <div class="btn-group">
-                            <a href="tel:${p.phone}" class="btn-call">ደውል</a>
-                            <button class="btn-pay" onclick="openPay('${p.name}', '${p.bank}')">ክፈል</button>
+                        <div class="action-group">
+                            <a href="tel:${p.phone}" class="act-btn" style="background:var(--primary)">ደውል</a>
+                            <a href="https://t.me/${p.telegram}" target="_blank" class="act-btn" style="background:#0088cc">አውራ</a>
                         </div>
                         
-                        <a href="${telegramUrl}" target="_blank" class="btn-share">📲 በቴሌግራም አጋራ</a>
-                        
-                        <div class="comment-section">
-                            <div class="comment-list">${commHTML || 'አስተያየት የለም'}</div>
-                            <div class="comment-input-row">
-                                <input type="text" id="comm-${id}" placeholder="አስተያየት...">
-                                <button class="btn-send" onclick="addComm('${id}')">ላክ</button>
+                        <button class="btn" style="background:var(--accent); margin-top:10px;" onclick="shareTg('${p.name}', '${p.price}')">📲 አጋራ</button>
+                        <button class="btn" style="background:var(--dark); margin-top:5px;" onclick="openPay('${p.name}', '${p.bank}')">💳 ክፈል</button>
+
+                        <div class="comment-box">
+                            <div class="comm-list">${comms || 'አስተያየት የለም'}</div>
+                            <div style="display:flex; gap:5px;">
+                                <input type="text" id="in-${p.id}" placeholder="አስተያየት..." style="margin-bottom:0; font-size:12px;">
+                                <button class="btn" style="width:60px; padding:5px;" onclick="addComm('${p.id}')">ላክ</button>
                             </div>
                         </div>
 
-                        <div class="admin-actions">
-                            <button class="btn-sm" style="background:#34495e; color:white;" onclick="markSold('${id}')">ተሽጧል በል</button>
-                            <button class="btn-sm" style="background:#fadbd8; color:red;" onclick="delItem('${id}')">አጥፋ</button>
+                        <div class="admin-box">
+                            <button class="btn-sm" style="background:#34495e;" onclick="markSold('${p.id}')">ተሽጧል</button>
+                            <button class="btn-sm" style="background:var(--danger);" onclick="delItem('${p.id}')">አጥፋ</button>
                         </div>
                     </div>
                 </div>`;
         });
     }
 
-    // እይታን እና ላይክን በሰላም መቁጠሪያ (Transactions)
-    function incView(id) { db.ref('products/' + id + '/views').transaction(c => (c || 0) + 1); }
-    function vote(id, type) { db.ref('products/' + id + '/' + type).transaction(c => (c || 0) + 1); }
-    
+    // 4. Helper Functions
+    function updateStat(id, type) { db.ref('products/' + id + '/' + type).transaction(c => (c || 0) + 1); }
     function addComm(id) {
-        const input = document.getElementById('comm-' + id);
-        if(input.value) { db.ref('products/' + id + '/comments').push({ text: input.value }); input.value = ""; }
+        const t = document.getElementById('in-' + id).value;
+        if(t) { db.ref('products/' + id + '/comments').push({ text: t }); document.getElementById('in-' + id).value = ""; }
     }
-    
-    function openPay(name, bank) { currentPName = name; document.getElementById('bankDetails').innerText = bank; document.getElementById('payModal').style.display = "block"; }
-    function closeModal() { document.getElementById('payModal').style.display = "none"; }
-    
-    function markSold(id) { if(prompt("Admin PIN?") === "2024") db.ref('products/' + id).update({ status: 'sold' }); }
-    function delItem(id) { if(prompt("Admin PIN?") === "2024") db.ref('products/' + id).remove(); }
+    function markSold(id) { if(prompt("PIN?") === "2024") db.ref('products/' + id).update({ status: 'sold' }); }
+    function delItem(id) { if(prompt("PIN?") === "2024") db.ref('products/' + id).remove(); }
+    function shareTg(n, p) { window.open(`https://t.me/share/url?url=${encodeURIComponent("ምርት፡ "+n+"\nዋጋ፡ "+p+" ብር\nእዚህ ይመልከቱ፡ "+window.location.href)}`); }
+    function openPay(n, b) { currentP = n; document.getElementById('bankDetails').innerText = b; document.getElementById('payModal').style.display = "block"; }
     
     function sendReceipt() {
-        const file = document.getElementById('receiptImg').files[0];
-        if(!file) return;
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => {
-            db.ref('receipts').push({ product: currentPName, img: reader.result, time: new Date().toLocaleString() });
+        const f = document.getElementById('receiptImg').files[0];
+        if(!f) return;
+        const r = new FileReader(); r.readAsDataURL(f);
+        r.onload = () => {
+            db.ref('receipts').push({ product: currentP, img: r.result, time: new Date().toLocaleString() });
             alert("ደረሰኝ ተልኳል!"); closeModal();
         };
     }
 
-    function toggleReceipts() {
-        if(prompt("Admin PIN?") === "2024") {
-            const sec = document.getElementById('receiptSection');
-            sec.style.display = sec.style.display === 'none' ? 'block' : 'none';
+    function viewReceipts() {
+        if(prompt("PIN?") === "2024") {
+            const s = document.getElementById('receiptSection'); s.style.display = s.style.display === 'none' ? 'block' : 'none';
             db.ref('receipts').on('value', snap => {
                 const list = document.getElementById('receiptList'); list.innerHTML = "";
-                snap.forEach(c => {
-                    const r = c.val();
-                    list.innerHTML += `<div style="border-bottom:1px solid #eee; padding:10px;"><p>ምርት፡ ${r.product}</p><img src="${r.img}" style="width:100px; cursor:pointer;" onclick="window.open(this.src)"></div>`;
-                });
+                snap.forEach(c => { const d = c.val(); list.innerHTML += `<div style="border-bottom:1px solid #ddd; padding:10px;"><p>${d.product}</p><img src="${d.img}" style="width:100px; cursor:pointer;" onclick="window.open(this.src)"></div>`; });
             });
         }
     }
