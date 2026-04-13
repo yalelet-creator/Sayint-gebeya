@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ሳይንት ገበያ ፕሮ ማክስ | Sayint Gebeya Ultimate</title>
+    <title>ሳይንት ገበያ ፕሮ ማክስ | Sayint Gebeya Absolute Edition</title>
     
-    <!-- External Libraries -->
+    <!-- Libraries -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -17,7 +17,7 @@
         }
         .dark-mode { --bg: #121212; --card: #1e1e1e; --text: #e0e0e0; }
         
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); color: var(--text); transition: 0.3s; padding-bottom: 50px; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; margin: 0; background: var(--bg); color: var(--text); transition: 0.3s; padding-bottom: 50px; }
         
         header { 
             background: linear-gradient(135deg, var(--primary), #27ae60); color: white; 
@@ -26,13 +26,8 @@
         }
 
         .container { max-width: 1200px; margin: auto; padding: 20px; }
-        .card { background: var(--card); padding: 25px; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 20px; border: 1px solid rgba(0,0,0,0.05); }
+        .card { background: var(--card); padding: 25px; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 20px; }
         
-        /* Search & Filters */
-        .filter-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px; }
-        .filter-btn { padding: 10px 20px; border-radius: 30px; border: 1px solid var(--primary); background: none; color: var(--text); cursor: pointer; font-weight: bold; }
-        .filter-btn.active { background: var(--primary); color: white; }
-
         input, select, textarea { 
             width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 12px; 
             margin-bottom: 10px; background: var(--card); color: var(--text); outline: none; box-sizing: border-box;
@@ -42,7 +37,7 @@
         .btn-add { background: var(--secondary); margin-bottom: 10px; }
 
         /* Product Cards */
-        .product-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px; }
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 30px; }
         .product-card { background: var(--card); border-radius: 30px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.05); position: relative; transition: 0.3s; }
         .product-card.sold { opacity: 0.6; filter: grayscale(0.7); }
         .product-card img { width: 100%; height: 280px; object-fit: cover; cursor: pointer; }
@@ -51,32 +46,29 @@
         .product-card.sold .badge-sold { display: block; }
 
         .verified { position: absolute; top: 15px; left: 15px; background: white; color: var(--accent); padding: 5px 12px; border-radius: 20px; font-weight: bold; font-size: 11px; box-shadow: 0 5px 10px rgba(0,0,0,0.1); z-index: 10; }
-        .views-badge { position: absolute; top: 15px; right: 15px; background: rgba(0,0,0,0.6); color: white; padding: 4px 10px; border-radius: 20px; font-size: 11px; z-index: 10; }
+        .stats-row { position: absolute; top: 15px; right: 15px; display: flex; gap: 5px; z-index: 10; }
+        .stat-item { background: rgba(0,0,0,0.6); color: white; padding: 4px 10px; border-radius: 20px; font-size: 11px; }
 
-        .product-info { padding: 20px; }
+        .product-info { padding: 25px; }
         .price { color: var(--secondary); font-size: 32px; font-weight: 900; margin: 10px 0; }
         
-        /* Stats & Social */
         .vote-row { display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #eee; border-bottom: 1px solid #eee; margin-bottom: 15px; }
         .vote-btn { background: none; border: none; cursor: pointer; font-size: 16px; color: var(--text); display: flex; align-items: center; gap: 5px; }
 
         .action-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
         .act-btn { padding: 12px; border-radius: 12px; text-decoration: none; text-align: center; color: white; font-weight: bold; font-size: 14px; border: none; cursor: pointer; }
 
-        /* Comments */
-        .comment-box { background: rgba(0,0,0,0.03); padding: 15px; border-radius: 20px; margin-top: 15px; text-align: left; }
-        .comm-list { max-height: 100px; overflow-y: auto; font-size: 12px; margin-bottom: 10px; }
+        .comment-area { background: rgba(0,0,0,0.03); padding: 15px; border-radius: 20px; margin-top: 15px; text-align: left; }
+        .comm-list { max-height: 80px; overflow-y: auto; font-size: 12px; margin-bottom: 10px; }
         .comm-item { background: var(--card); padding: 6px; border-radius: 8px; margin-bottom: 5px; border-left: 3px solid var(--accent); }
 
         .admin-box { margin-top: 15px; border-top: 1px dashed #ddd; padding-top: 10px; display: flex; gap: 10px; }
         .btn-sm { flex: 1; padding: 8px; border-radius: 10px; border: none; font-size: 10px; cursor: pointer; color: white; font-weight: bold; }
 
-        /* Theme Toggle */
         .theme-btn { position: fixed; top: 15px; right: 15px; z-index: 1000; background: var(--card); border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); color: var(--text); }
         
-        /* Modals */
         .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); }
-        .modal-content { background: var(--card); margin: 10% auto; padding: 30px; border-radius: 25px; width: 85%; max-width: 400px; text-align: center; }
+        .modal-content { background: var(--card); margin: 15% auto; padding: 30px; border-radius: 25px; width: 85%; max-width: 400px; text-align: center; }
     </style>
 </head>
 <body id="body">
@@ -89,14 +81,15 @@
 </header>
 
 <div class="container">
-    <!-- መቆጣጠሪያ ካርድ -->
     <div class="card">
         <input type="text" id="searchBox" onkeyup="filterItems()" placeholder="ምርት ይፈልጉ...">
-        <div class="filter-row">
-            <button class="filter-btn active" onclick="setCategory('', event)">ሁሉም</button>
-            <button class="filter-btn" onclick="setCategory('እህል', event)">እህል</button>
-            <button class="filter-btn" onclick="setCategory('ከብት', event)">ከብት</button>
-            <button class="filter-btn" onclick="setCategory('ማር', event)">ማር</button>
+        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:15px;">
+            <select id="pCatFilter" onchange="filterItems()" style="width: auto; margin-bottom: 0;">
+                <option value="">ሁሉም ዘርፍ</option>
+                <option value="እህል">እህል</option>
+                <option value="ከብት">ከብት</option>
+                <option value="ማር">ማር</option>
+            </select>
             <select id="sortPrice" onchange="filterItems()" style="width: auto; margin-bottom: 0;">
                 <option value="new">አዲስ የተለጠፈ</option>
                 <option value="low">ዋጋ፡ ከረካሽ</option>
@@ -127,28 +120,29 @@
         </div>
     </div>
 
-    <!-- ደረሰኞች -->
+    <!-- ደረሰኞች ማያ ክፍል -->
     <div id="receiptSection" style="display:none;" class="card">
-        <h3>የደረሰኞች ማከማቻ</h3>
+        <h3>የገቡ የክፍያ ደረሰኞች (Admin)</h3>
         <div id="receiptList"></div>
     </div>
 
     <div id="productGrid" class="product-grid"></div>
 </div>
 
-<!-- Pay Modal -->
+<!-- ክፍያ Modal -->
 <div id="payModal" class="modal">
     <div class="modal-content">
-        <h2 style="color:var(--accent)">የክፍያ መረጃ</h2>
-        <p id="bankDetails" style="font-size: 18px; font-weight: bold; margin: 20px 0;"></p>
-        <input type="file" id="receiptImg">
-        <button class="btn" style="background:var(--accent); margin-top:10px;" onclick="sendReceipt()">ደረሰኝ ላክ</button>
+        <h2 style="color:var(--accent)">የክፍያ ማረጋገጫ</h2>
+        <p id="bankDetails" style="font-size: 18px; font-weight: bold; margin: 15px 0;"></p>
+        <p style="font-size: 13px;">ከከፈሉ በኋላ የደረሰኙን Screenshot እዚህ ይላኩ፦</p>
+        <input type="file" id="receiptImg" style="margin: 15px 0;">
+        <button class="btn" style="background:var(--accent)" onclick="sendReceipt()">ደረሰኝ ላክ</button>
         <button onclick="closeModal()" style="background:none; border:none; color:red; margin-top:15px; cursor:pointer;">ዝጋ</button>
     </div>
 </div>
 
 <script>
-    // 1. Firebase Config
+    // 1. Firebase Configuration
     const firebaseConfig = {
         apiKey: "AIzaSyAVn2jp_TR6Wjq1i_i5Xmk1Q6ea96KHMIQ",
         authDomain: "sayint-gebaye.firebaseapp.com",
@@ -162,23 +156,17 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
     let allProducts = [];
-    let selectedCat = "";
-    let currentP = "";
+    let currentProductName = "";
 
     function toggleTheme() { document.getElementById('body').classList.toggle('dark-mode'); }
     function toggleAdmin() { const f = document.getElementById('adminForm'); f.style.display = f.style.display === 'none' ? 'block' : 'none'; }
     function closeModal() { document.getElementById('payModal').style.display = "none"; }
-    function setCategory(cat, e) {
-        selectedCat = cat;
-        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-        e.target.classList.add('active');
-        filterItems();
-    }
 
     // 2. Add Product with Compression
     async function processAndAdd() {
         const file = document.getElementById('pImage').files[0];
-        if(!file || !document.getElementById('pName').value) { alert("መረጃ ያሟሉ!"); return; }
+        const name = document.getElementById('pName').value;
+        if(!file || !name) { alert("መረጃ ያሟሉ!"); return; }
         
         document.getElementById('loading').style.display = "block";
         document.getElementById('submitBtn').disabled = true;
@@ -198,7 +186,7 @@
                 const compressed = canvas.toDataURL("image/jpeg", 0.6);
                 
                 db.ref('products').push({
-                    name: document.getElementById('pName').value,
+                    name: name,
                     price: Number(document.getElementById('pPrice').value),
                     category: document.getElementById('pCat').value,
                     seller: document.getElementById('pSeller').value,
@@ -214,7 +202,7 @@
         };
     }
 
-    // 3. Render and Filter
+    // 3. Data Fetching
     db.ref('products').on('value', snap => {
         allProducts = [];
         snap.forEach(child => {
@@ -226,9 +214,10 @@
 
     function filterItems() {
         const term = document.getElementById('searchBox').value.toLowerCase();
+        const cat = document.getElementById('pCatFilter').value;
         const sort = document.getElementById('sortPrice').value;
         let filtered = allProducts.filter(p => {
-            return p.name.toLowerCase().includes(term) && (selectedCat === "" || p.category === selectedCat);
+            return p.name.toLowerCase().includes(term) && (cat === "" || p.category === cat);
         });
         if(sort === "low") filtered.sort((a,b) => a.price - b.price);
         if(sort === "high") filtered.sort((a,b) => b.price - a.price);
@@ -247,14 +236,16 @@
             grid.innerHTML += `
                 <div class="product-card ${isSold ? 'sold' : ''}">
                     <div class="verified"><i class="fas fa-check-circle"></i> የታመነ</div>
-                    <div class="views-badge">👁️ ${p.views || 0} እይታ</div>
+                    <div class="stats-row">
+                        <div class="stat-item">👁️ ${p.views || 0}</div>
+                    </div>
                     <div class="badge-sold">ተሽጧል</div>
                     <img src="${p.img}" onclick="updateStat('${p.id}', 'views')">
                     <div class="product-info">
                         <span style="font-size:10px; color:var(--primary); font-weight:bold;">${p.category}</span>
                         <h3>${p.name}</h3>
                         <div style="color:var(--secondary); font-size:12px; margin-bottom:5px;"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
-                        <p class="price">${p.price.toLocaleString()} ብር</p>
+                        <p class="price">${Number(p.price).toLocaleString()} ብር</p>
                         <p style="font-size:12px; color:var(--gray)">📍 ${p.loc} | 👤 ${p.seller}</p>
                         
                         <div class="vote-row">
@@ -267,10 +258,10 @@
                             <a href="https://t.me/${p.telegram}" target="_blank" class="act-btn" style="background:#0088cc">አውራ</a>
                         </div>
                         
-                        <button class="btn" style="background:var(--accent); margin-top:10px;" onclick="shareTg('${p.name}', '${p.price}')">📲 በቴሌግራም አጋራ</button>
-                        <button class="btn" style="background:var(--dark); margin-top:5px;" onclick="openPay('${p.name}', '${p.bank}')">💳 ክፈል</button>
+                        <button class="btn" style="background:var(--accent); margin-top:10px;" onclick="shareTg('${p.name}', '${p.price}')">📲 አጋራ</button>
+                        <button class="btn" style="background:var(--dark); margin-top:5px;" onclick="openPay('${p.name}', '${p.bank}')">💳 ክፈል / ደረሰኝ ላክ</button>
 
-                        <div class="comment-box">
+                        <div class="comment-area">
                             <div class="comm-list">${comms || 'አስተያየት የለም'}</div>
                             <div style="display:flex; gap:5px;">
                                 <input type="text" id="in-${p.id}" placeholder="አስተያየት..." style="margin-bottom:0; font-size:12px;">
@@ -287,33 +278,54 @@
         });
     }
 
-    // 4. Helpers
     function updateStat(id, type) { db.ref('products/' + id + '/' + type).transaction(c => (c || 0) + 1); }
     function addComm(id) {
         const t = document.getElementById('in-' + id).value;
         if(t) { db.ref('products/' + id + '/comments').push({ text: t }); document.getElementById('in-' + id).value = ""; }
     }
+    function shareTg(n, p) { window.open(`https://t.me/share/url?url=${encodeURIComponent("የሳይንት ገበያ ምርት፡ "+n+"\nዋጋ፡ "+p+" ብር\nእዚህ ይመልከቱ፡ "+window.location.href)}`); }
+    function openPay(n, b) { currentProductName = n; document.getElementById('bankDetails').innerText = b; document.getElementById('payModal').style.display = "block"; }
+    
     function markSold(id) { if(prompt("PIN?") === "2024") db.ref('products/' + id).update({ status: 'sold' }); }
     function delItem(id) { if(prompt("PIN?") === "2024") db.ref('products/' + id).remove(); }
-    function shareTg(n, p) { window.open(`https://t.me/share/url?url=${encodeURIComponent("የሳይንት ገበያ ምርት፡ "+n+"\nዋጋ፡ "+p+" ብር\nእዚህ ይመልከቱ፡ "+window.location.href)}`); }
-    function openPay(n, b) { currentP = n; document.getElementById('bankDetails').innerText = b; document.getElementById('payModal').style.display = "block"; }
-    
+
+    // 4. ደረሰኝ የመላኪያ ተግባር
     function sendReceipt() {
-        const f = document.getElementById('receiptImg').files[0];
-        if(!f) return;
-        const r = new FileReader(); r.readAsDataURL(f);
+        const file = document.getElementById('receiptImg').files[0];
+        if(!file) { alert("ደረሰኝ ፎቶ ይምረጡ!"); return; }
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
         reader.onload = () => {
-            db.ref('receipts').push({ product: currentP, img: r.result, time: new Date().toLocaleString() });
-            alert("ደረሰኝ ተልኳል!"); closeModal();
+            db.ref('receipts').push({
+                product: currentProductName,
+                img: reader.result,
+                time: new Date().toLocaleString()
+            }).then(() => {
+                alert("ደረሰኝ በተሳካ ሁኔታ ተልኳል! ሻጩ ያረጋግጣል።");
+                closeModal();
+            });
         };
     }
 
+    // 5. ደረሰኞችን ማያ ክፍል (Admin)
     function viewReceipts() {
-        if(prompt("PIN?") === "2024") {
-            const s = document.getElementById('receiptSection'); s.style.display = s.style.display === 'none' ? 'block' : 'none';
+        if(prompt("Admin PIN?") === "2024") {
+            const s = document.getElementById('receiptSection');
+            s.style.display = s.style.display === 'none' ? 'block' : 'none';
             db.ref('receipts').on('value', snap => {
-                const list = document.getElementById('receiptList'); list.innerHTML = "";
-                snap.forEach(c => { const d = c.val(); list.innerHTML += `<div style="border-bottom:1px solid #ddd; padding:10px;"><p>${d.product}</p><img src="${d.img}" style="width:100px; cursor:pointer;" onclick="window.open(this.src)"></div>`; });
+                const list = document.getElementById('receiptList');
+                list.innerHTML = "";
+                snap.forEach(c => {
+                    const d = c.val();
+                    list.innerHTML += `
+                        <div style="border-bottom:1px solid #ddd; padding:15px; display:flex; gap:15px; align-items:center;">
+                            <img src="${d.img}" style="width:120px; border-radius:10px; cursor:pointer;" onclick="window.open(this.src)">
+                            <div>
+                                <p><strong>ምርት፡</strong> ${d.product}</p>
+                                <p><strong>ሰዓት፡</strong> ${d.time}</p>
+                            </div>
+                        </div>`;
+                });
             });
         }
     }
