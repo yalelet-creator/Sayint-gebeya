@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ሳይንት ገበያ ፕሮ | Sayint Gebeya Official</title>
+    <title>ሳይንት ገበያ ፕሮ | Sayint Gebeya Social</title>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
     <style>
@@ -16,25 +16,29 @@
         input, select, textarea { padding: 12px; border: 1px solid #ddd; border-radius: 12px; font-size: 15px; width: 100%; box-sizing: border-box; outline: none; margin-bottom: 10px; }
         .btn { background: var(--primary); color: white; border: none; padding: 16px; border-radius: 12px; cursor: pointer; font-weight: bold; font-size: 17px; width: 100%; transition: 0.3s; }
         .btn-add { background: var(--secondary); margin-bottom: 10px; }
-        #adminForm { display: none; background: #fffcf4; padding: 20px; border-radius: 15px; border: 2px dashed var(--secondary); margin-top: 15px; }
+        #adminForm { display: none; background: #fffcf4; padding: 25px; border-radius: 20px; border: 2px dashed var(--secondary); margin-top: 15px; }
 
         .product-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; }
         .product-card { background: white; border-radius: 25px; overflow: hidden; box-shadow: 0 10px 20px rgba(0,0,0,0.05); position: relative; transition: 0.3s; }
+        .product-card.is-sold { opacity: 0.7; filter: grayscale(0.5); }
         .product-card img { width: 100%; height: 250px; object-fit: cover; cursor: pointer; }
-        .is-sold { opacity: 0.7; filter: grayscale(0.5); }
+        
         .badge-sold { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-15deg); background: var(--danger); color: white; padding: 10px 30px; border-radius: 10px; font-size: 24px; font-weight: bold; border: 4px solid white; z-index: 20; display: none; }
-        .is-sold .badge-sold { display: block; }
-
+        .product-card.is-sold .badge-sold { display: block; }
+        
+        /* Stats row (Views & Likes) */
         .stats-row { position: absolute; top: 15px; left: 15px; display: flex; gap: 5px; z-index: 10; }
         .stat-badge { background: rgba(0,0,0,0.6); color: white; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; }
         
         .product-info { padding: 20px; }
         .price { color: var(--secondary); font-size: 28px; font-weight: bold; margin: 5px 0; }
         
-        /* Vote Row UI */
-        .vote-row { display: flex; justify-content: space-around; margin: 15px 0; padding: 10px 0; border-top: 1px solid #eee; border-bottom: 1px solid #eee; }
-        .vote-btn { background: #f9f9f9; border: 1px solid #eee; border-radius: 10px; padding: 8px 15px; cursor: pointer; font-size: 14px; display: flex; align-items: center; gap: 5px; color: var(--dark); transition: 0.2s; }
-        .vote-btn:hover { background: #eee; transform: scale(1.05); }
+        /* Like Dislike Row */
+        .vote-row { display: flex; justify-content: space-around; margin: 15px 0; border-top: 1px solid #eee; border-bottom: 1px solid #eee; padding: 10px 0; }
+        .vote-btn { background: none; border: none; cursor: pointer; font-size: 16px; display: flex; align-items: center; gap: 5px; color: var(--gray); transition: 0.2s; }
+        .vote-btn:hover { transform: scale(1.2); }
+        .btn-like-active { color: var(--primary); }
+        .btn-dislike-active { color: var(--danger); }
 
         .btn-group { display: flex; gap: 10px; margin-top: 15px; }
         .btn-call { flex: 1; background: var(--primary); text-decoration: none; color: white; text-align: center; padding: 12px; border-radius: 10px; font-weight: bold; font-size: 14px; }
@@ -62,13 +66,13 @@
 
 <div class="container">
     <div class="card">
-        <input type="text" id="searchBar" onkeyup="searchProducts()" placeholder="ምርት ይፈልጉ...">
+        <input type="text" id="searchBar" onkeyup="searchProducts()" placeholder="የሚፈልጉትን ምርት እዚህ ይፈልጉ...">
         <button class="btn btn-add" onclick="toggleForm()">+ አዲስ ምርት ይጨምሩ</button>
         <button onclick="toggleReceipts()" style="background:var(--dark); color:white; padding:10px; border:none; border-radius:10px; width:100%; margin-top:5px; cursor:pointer; font-weight:bold;">የገቡ ደረሰኞችን እይ (Admin)</button>
         
         <div id="adminForm">
             <input type="text" id="pName" placeholder="የምርት ስም">
-            <input type="number" id="pPrice" placeholder="ዋጋ (ብር)">
+            <input type="number" id="pPrice" placeholder="ዋጋ">
             <input type="text" id="pSeller" placeholder="የሻጭ ስም">
             <input type="text" id="pPhone" placeholder="ስልክ ቁጥር">
             <input type="text" id="pBank" placeholder="የባንክ/ቴሌብር መረጃ">
@@ -78,6 +82,12 @@
             <button class="btn" onclick="addProduct()">ገበያ ላይ ይውጣ</button>
         </div>
     </div>
+
+    <div id="receiptSection" style="display:none;" class="card">
+        <h3>የደረሰኞች ማከማቻ</h3>
+        <div id="receiptList"></div>
+    </div>
+
     <div id="productGrid" class="product-grid"></div>
 </div>
 
@@ -142,6 +152,7 @@
             const p = child.val();
             const id = child.key;
             const isSold = p.status === 'sold';
+            
             let commHTML = "";
             if(p.comments) Object.values(p.comments).forEach(c => commHTML += `<div class="single-comment">💬 ${c.text}</div>`);
 
@@ -153,14 +164,14 @@
                         <span class="stat-badge" style="background:#e74c3c">👎 ${p.dislikes || 0}</span>
                     </div>
                     <span class="badge-sold">ተሽጧል</span>
-                    <img src="${p.img}" onclick="incView('${id}')">
+                    <img src="${p.img}" onclick="incView('${id}', ${p.views || 0})">
                     <div class="product-info">
                         <h3>${p.name}</h3>
                         <p class="price">${Number(p.price).toLocaleString()} ብር</p>
                         
                         <div class="vote-row">
-                            <button class="vote-btn" onclick="vote('${id}', 'likes')">👍 ውደድ</button>
-                            <button class="vote-btn" onclick="vote('${id}', 'dislikes')">👎 አትውደድ</button>
+                            <button class="vote-btn" onclick="vote('${id}', 'likes', ${p.likes || 0})">👍 ውደድ</button>
+                            <button class="vote-btn" onclick="vote('${id}', 'dislikes', ${p.dislikes || 0})">👎 አትውደድ</button>
                         </div>
 
                         <div class="btn-group">
@@ -177,23 +188,20 @@
                         </div>
 
                         <div class="admin-actions">
-                            <button class="btn-sm btn-sold" onclick="markSold('${id}')">ተሽጧል</button>
-                            <button class="btn-sm btn-del" onclick="delItem('${id}')">አጥፋ</button>
+                            <button class="btn-sm" style="background:#34495e; color:white;" onclick="markSold('${id}')">ተሽጧል</button>
+                            <button class="btn-sm" style="background:#fadbd8; color:red;" onclick="delItem('${id}')">አጥፋ</button>
                         </div>
                     </div>
                 </div>`;
         });
     });
 
-    // አስተማማኝ የመቆጠሪያ ዘዴ (Transaction)
-    function incView(id) {
-        db.ref('products/' + id + '/views').transaction((current) => (current || 0) + 1);
+    function incView(id, cur) { db.ref('products/' + id).update({ views: cur + 1 }); }
+    function vote(id, type, cur) { 
+        let updateData = {};
+        updateData[type] = cur + 1;
+        db.ref('products/' + id).update(updateData); 
     }
-
-    function vote(id, type) {
-        db.ref('products/' + id + '/' + type).transaction((current) => (current || 0) + 1);
-    }
-
     function addComm(id) {
         const input = document.getElementById('comm-' + id);
         if(input.value) {
@@ -201,11 +209,10 @@
             input.value = "";
         }
     }
-
     function openPay(name, bank) { currentPName = name; document.getElementById('bankDetails').innerText = bank; document.getElementById('payModal').style.display = "block"; }
     function closeModal() { document.getElementById('payModal').style.display = "none"; }
-    function markSold(id) { if(prompt("PIN?") === "2024") db.ref('products/' + id).update({ status: 'sold' }); }
-    function delItem(id) { if(prompt("PIN?") === "2024") db.ref('products/' + id).remove(); }
+    function markSold(id) { if(prompt("Admin PIN?") === "2024") db.ref('products/' + id).update({ status: 'sold' }); }
+    function delItem(id) { if(prompt("Admin PIN?") === "2024") db.ref('products/' + id).remove(); }
     
     function sendReceipt() {
         const file = document.getElementById('receiptImg').files[0];
@@ -223,10 +230,11 @@
             const sec = document.getElementById('receiptSection');
             sec.style.display = sec.style.display === 'none' ? 'block' : 'none';
             db.ref('receipts').on('value', snap => {
-                const list = document.getElementById('receiptList'); list.innerHTML = "";
+                const list = document.getElementById('receiptList');
+                list.innerHTML = "";
                 snap.forEach(c => {
                     const r = c.val();
-                    list.innerHTML += `<div style="border-bottom:1px solid #eee; padding:10px;"><p>ምርት፡ ${r.product}</p><img src="${r.img}" style="width:100px;"></div>`;
+                    list.innerHTML += `<div style="border-bottom:1px solid #eee; padding:10px;"><p>ምርት፡ ${r.product}</p><img src="${r.img}" style="width:100px; cursor:pointer;" onclick="window.open(this.src)"></div>`;
                 });
             });
         }
