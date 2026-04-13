@@ -88,58 +88,20 @@
     </div>
 </div>
 
+<!-- የቀድሞው ኮድህ እንዳለ ሆኖ፣ በስክሪፕቱ ውስጥ displayProducts የሚለውን ክፍል እንዲህ አሻሽለነዋል -->
+
 <script>
-    // Firebase Config (ያንተ ቁልፎች)
-    const firebaseConfig = {
-        apiKey: "AIzaSyAVn2jp_TR6Wjq1i_i5Xmk1Q6ea96KHMIQ",
-        authDomain: "sayint-gebaye.firebaseapp.com",
-        projectId: "sayint-gebaye",
-        storageBucket: "sayint-gebaye.firebasestorage.app",
-        messagingSenderId: "239223565179",
-        appId: "1:239223565179:web:e4a4c57367fb3354846bde",
-        databaseURL: "https://sayint-gebaye-default-rtdb.firebaseio.com"
-    };
+    // ... (የቀድሞው የFirebase Config እና ሌሎች ክፍሎች እንዳሉ ናቸው) ...
 
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-    let currentPName = "";
-
-    function toggleForm() {
-        const f = document.getElementById('adminForm');
-        f.style.display = f.style.display === 'none' ? 'block' : 'none';
-    }
-
-    function addProduct() {
-        const name = document.getElementById('pName').value;
-        const price = document.getElementById('pPrice').value;
-        const phone = document.getElementById('pPhone').value;
-        const imgFile = document.getElementById('pImage').files[0];
-
-        if(!name || !price || !phone || !imgFile) { alert("መረጃ ያሟሉ!"); return; }
-
-        const reader = new FileReader();
-        reader.readAsDataURL(imgFile);
-        reader.onload = function() {
-            db.ref('products').push({
-                name, price, phone, 
-                bank: document.getElementById('pBank').value,
-                seller: document.getElementById('pSeller').value,
-                loc: document.getElementById('pLoc').value,
-                desc: document.getElementById('pDesc').value,
-                img: reader.result,
-                status: 'available',
-                time: new Date().toLocaleString('am-ET')
-            }).then(() => location.reload());
-        };
-    }
-
-    db.ref('products').on('value', snap => {
+    function displayProducts(items) {
         const grid = document.getElementById('productGrid');
         grid.innerHTML = "";
-        snap.forEach(child => {
-            const p = child.val();
-            const id = child.key;
+        items.reverse().forEach((p) => {
             const isSold = p.status === 'sold';
+            // የቴሌግራም መልዕክት ማዘጋጃ
+            const shareText = `የሳይንት ገበያ ምርት፡ ${p.name} \nዋጋ፡ ${p.price} ብር \nቦታ፡ ${p.loc} \nበዚህ ሊንክ ይመልከቱ፡ https://yalelet-creator.github.io/Sayint-gebeya/`;
+            const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent(shareText)}`;
+
             grid.innerHTML += `
                 <div class="product-card ${isSold ? 'is-sold' : ''}">
                     <span class="badge-sold">ተሽጧል</span>
@@ -149,56 +111,27 @@
                         <h3>${p.name}</h3>
                         <p class="price">${Number(p.price).toLocaleString()} ብር</p>
                         <p style="font-size:13px; color:#7f8c8d;">📍 ${p.loc} | 👤 ${p.seller}</p>
+                        
                         <div class="btn-group">
                             <a href="tel:${p.phone}" class="btn-call">ደውል</a>
                             <button class="btn-pay" onclick="openPay('${p.name}', '${p.bank}')">ክፈል</button>
                         </div>
+
+                        <!-- አዲሱ የቴሌግራም ማጋሪያ ቁልፍ -->
+                        <div style="margin-top:10px;">
+                            <a href="${telegramUrl}" target="_blank" style="background:#0088cc; color:white; padding:8px; display:block; text-decoration:none; border-radius:10px; font-size:14px; font-weight:bold;">📲 በቴሌግራም አጋራ</a>
+                        </div>
+                        
                         <div class="admin-actions">
-                            <button class="btn-sm btn-sold" onclick="markSold('${id}')">ተሽጧል በል</button>
-                            <button class="btn-sm btn-del" onclick="deleteItem('${id}')">አጥፋ</button>
+                            <button class="btn-sm btn-sold" onclick="markSold('${p.id}')">ተሽጧል በል</button>
+                            <button class="btn-sm btn-del" onclick="deleteItem('${p.id}')">አጥፋ</button>
                         </div>
                     </div>
                 </div>`;
         });
-    });
-
-    function openPay(name, bank) {
-        currentPName = name;
-        document.getElementById('bankDetails').innerText = bank;
-        document.getElementById('payModal').style.display = "block";
     }
-
-    function markSold(id) {
-        const pin = prompt("ሚስጥራዊ ቁጥር (PIN) ያስገቡ፦");
-        if(pin === "2024") { db.ref('products/' + id).update({ status: 'sold' }); }
-        else { alert("PIN ተሳስቷል!"); }
-    }
-
-    function deleteItem(id) {
-        const pin = prompt("ለማጥፋት ሚስጥራዊ ቁጥር (PIN) ያስገቡ፦");
-        if(pin === "2024") { db.ref('products/' + id).remove(); }
-        else { alert("PIN ተሳስቷል!"); }
-    }
-
-    function sendReceipt() {
-        const file = document.getElementById('receiptImg').files[0];
-        if(!file) return;
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => {
-            db.ref('receipts').push({ product: currentPName, img: reader.result, time: new Date().toLocaleString() });
-            alert("ደረሰኝ ተልኳል!"); closeModal();
-        };
-    }
-
-    function closeModal() { document.getElementById('payModal').style.display = "none"; }
-    function searchProducts() {
-        const term = document.getElementById('searchBar').value.toLowerCase();
-        document.querySelectorAll('.product-card').forEach(card => {
-            const name = card.querySelector('h3').innerText.toLowerCase();
-            card.style.display = name.includes(term) ? "block" : "none";
-        });
-    }
+    
+    // ... (የቀረው ኮድ እንዳለ ይቀጥላል) ...
 </script>
 </body>
 </html>
