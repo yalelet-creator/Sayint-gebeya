@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ሳይንት ገበያ ፕሮ ማክስ | Sayint Gebeya Absolute Edition</title>
+    <title>ሳይንት ገበያ ፕሮ ማክስ | Sayint Gebeya Eternal</title>
     
-    <!-- PWA & Libraries -->
     <link rel="manifest" href="manifest.json">
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
@@ -13,69 +12,37 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        :root { 
-            --primary: #2ecc71; --secondary: #f39c12; --accent: #3498db; 
-            --danger: #e74c3c; --bg: #f0f2f5; --card: #ffffff; --text: #2c3e50; --gray: #7f8c8d;
-        }
+        :root { --primary: #2ecc71; --secondary: #f39c12; --accent: #3498db; --danger: #e74c3c; --bg: #f0f2f5; --card: #ffffff; --text: #2c3e50; --gray: #7f8c8d; }
         .dark-mode { --bg: #121212; --card: #1e1e1e; --text: #ecf0f1; --gray: #bdc3c7; }
-        
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; margin: 0; background: var(--bg); color: var(--text); transition: 0.3s; }
-        header { background: linear-gradient(135deg, var(--primary), #27ae60); color: white; padding: 60px 20px; text-align: center; border-bottom: 5px solid var(--secondary); clip-path: polygon(0 0, 100% 0, 100% 90%, 0 100%); }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); color: var(--text); transition: 0.3s; }
+        header { background: linear-gradient(135deg, var(--primary), #27ae60); color: white; padding: 50px 20px; text-align: center; border-bottom: 5px solid var(--secondary); clip-path: polygon(0 0, 100% 0, 100% 90%, 0 100%); }
         .container { max-width: 1200px; margin: auto; padding: 20px; min-height: 80vh; }
         .card { background: var(--card); padding: 25px; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); margin-bottom: 25px; border: 1px solid rgba(0,0,0,0.05); }
-        
-        input, select, textarea { width: 100%; padding: 14px; border: 2px solid #ddd; border-radius: 12px; margin-bottom: 12px; background: var(--card); color: var(--text); outline: none; box-sizing: border-box; font-size: 16px; }
-        .btn { background: var(--primary); color: white; border: none; padding: 15px; border-radius: 12px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.3s; font-size: 16px; }
-
-        /* Photo Slider */
-        .product-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px; }
-        .product-card { background: var(--card); border-radius: 30px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.05); position: relative; transition: 0.3s; }
+        input, select, textarea { width: 100%; padding: 14px; border: 2px solid #ddd; border-radius: 12px; margin-bottom: 12px; background: var(--card); color: var(--text); outline: none; box-sizing: border-box; }
+        .btn { background: var(--primary); color: white; border: none; padding: 15px; border-radius: 12px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.3s; }
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; }
+        .product-card { background: var(--card); border-radius: 30px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.05); position: relative; }
         .product-card.sold { opacity: 0.6; filter: grayscale(0.7); }
-        
         .img-container { position: relative; width: 100%; height: 320px; background: #000; display: flex; align-items: center; justify-content: center; }
         .img-container img { max-width: 100%; max-height: 100%; object-fit: contain; cursor: zoom-in; }
-        
         .slide-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.2); color: white; border: none; padding: 15px 10px; cursor: pointer; font-size: 20px; z-index: 20; border-radius: 5px; }
         .prev { left: 5px; } .next { right: 5px; }
-        .img-counter { position: absolute; bottom: 15px; background: rgba(0,0,0,0.5); color: white; padding: 4px 12px; border-radius: 20px; font-size: 11px; }
-
         .badge-sold { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-15deg); background: var(--danger); color: white; padding: 10px 30px; border-radius: 10px; font-size: 24px; font-weight: bold; border: 4px solid white; z-index: 30; display: none; }
         .product-card.sold .badge-sold { display: block; }
         .verified-badge { position: absolute; top: 15px; left: 15px; background: white; color: var(--accent); padding: 5px 12px; border-radius: 20px; font-weight: bold; font-size: 11px; z-index: 10; box-shadow: 0 5px 10px rgba(0,0,0,0.1); }
         .views-badge { position: absolute; top: 15px; right: 15px; background: rgba(0,0,0,0.6); color: white; padding: 4px 12px; border-radius: 20px; font-size: 11px; z-index: 10; }
-
-        .product-info { padding: 25px; }
-        .price { color: var(--secondary); font-size: 32px; font-weight: 900; margin: 10px 0; }
-        .vote-row { display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #eee; border-bottom: 1px solid #eee; margin-bottom: 15px; }
-        .vote-btn { background: none; border: none; cursor: pointer; font-size: 16px; color: var(--text); display: flex; align-items: center; gap: 8px; }
-
+        .price { color: var(--secondary); font-size: 30px; font-weight: 900; margin: 10px 0; }
         .action-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
         .act-btn { padding: 12px; border-radius: 12px; text-decoration: none; text-align: center; color: white; font-weight: bold; font-size: 14px; border: none; cursor: pointer; }
-
-        /* Comment & Voice UI */
         .comment-area { background: rgba(0,0,0,0.05); padding: 15px; border-radius: 20px; margin-top: 15px; text-align: left; }
-        .comm-list { max-height: 100px; overflow-y: auto; font-size: 12px; margin-bottom: 10px; }
-        .comm-item { background: var(--card); padding: 8px; border-radius: 10px; margin-bottom: 6px; border-left: 4px solid var(--accent); color: var(--text); }
-        .voice-player { width: 100%; margin-top: 10px; border-radius: 10px; }
-
-        /* Admin Receipt Viewer */
+        .comm-item { background: var(--card); padding: 8px; border-radius: 10px; margin-bottom: 6px; border-left: 4px solid var(--accent); font-size: 12px; }
         #receiptSection { display: none; background: #eef2ff; border: 4px solid var(--accent); padding: 30px; border-radius: 25px; margin-top: 25px; box-shadow: 0 15px 45px rgba(0,0,0,0.2); color: #333; }
         .dark-mode #receiptSection { background: #1a1c2c; color: #fff; }
-        .receipt-card { background: white; padding: 20px; border-radius: 20px; margin-bottom: 15px; display: flex; gap: 20px; align-items: center; border: 1px solid #ddd; text-align: left; }
-        .receipt-card img { width: 110px; height: 110px; object-fit: cover; border-radius: 15px; border: 3px solid var(--accent); cursor: pointer; }
-
-        /* Admin Controls */
-        .admin-box { margin-top: 20px; border-top: 1px dashed #ddd; padding-top: 15px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
-        .btn-sm { padding: 10px; border-radius: 10px; border: none; font-size: 10px; cursor: pointer; color: white; font-weight: bold; }
-
-        /* Footer */
-        footer { background: var(--text); color: green; padding: 60px 20px; text-align: center; margin-top: 80px; border-top: 5px solid var(--primary); }
-        .footer-logo { font-size: 28px; font-weight: 900; color: var(--primary); margin-bottom: 10px; }
-
-        /* Overlay & Modals */
+        .receipt-card { background: white; padding: 15px; border-radius: 20px; margin-bottom: 15px; display: flex; gap: 20px; align-items: center; border: 1px solid #ddd; }
+        .theme-btn { position: fixed; top: 15px; right: 15px; z-index: 2000; background: var(--card); border: none; width: 50px; height: 50px; border-radius: 50%; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); color: var(--text); }
         #fullScreenOverlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 5000; justify-content: center; align-items: center; }
         #fullImg { max-width: 95%; max-height: 95%; border-radius: 10px; }
-        .theme-btn { position: fixed; top: 15px; right: 15px; z-index: 2000; background: var(--card); border: none; width: 50px; height: 50px; border-radius: 50%; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); color: var(--text); font-size: 20px; }
+        footer { background: var(--text); color: green; padding: 60px 20px; text-align: center; margin-top: 50px; border-top: 5px solid var(--primary); }
         .modal { display: none; position: fixed; z-index: 3000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); }
         .modal-content { background: var(--card); margin: 12% auto; padding: 35px; border-radius: 30px; width: 90%; max-width: 450px; text-align: center; border: 2px solid var(--accent); }
     </style>
@@ -90,54 +57,41 @@
 
 <header>
     <h1>ሳይንት ገበያ ፕሮ ማክስ</h1>
-    <p>የአምሐራ ሳይንት የንግድና የቴክኖሎጂ ማዕከል | በያለለት መለካሙ የተገነባ</p>
+    <p>የአምሐራ ሳይንት የንግድና የቴክኖሎጂ ማዕከል |Developed by yalelet melkamu.</p>
 </header>
 
 <div class="container">
-    <!-- Auth Card -->
     <div class="card" id="authBox">
         <div id="loggedOutUI">
             <h3>ሻጭ ነዎት? ይግቡ</h3>
-            <input type="email" id="authEmail" placeholder="ኢሜይል አድራሻ">
+            <input type="email" id="authEmail" placeholder="ኢሜይል">
             <input type="password" id="authPass" placeholder="ፓስወርድ">
             <button class="btn" onclick="handleAuth()">ይግቡ / ይመዝገቡ</button>
             <p onclick="toggleAuthMode()" style="cursor:pointer; color:var(--accent); margin-top:10px; font-weight:bold;">አዲስ ከሆኑ እዚህ ይመዝገቡ</p>
         </div>
         <div id="loggedInUI" style="display:none; text-align:center;">
             <p>እንኳን ደህና መጡ <span id="userDisp" style="font-weight:900; color:var(--primary);"></span>!</p>
-            <button class="btn btn-secondary" onclick="toggleAdmin()">+ አዲስ ምርት ይጨምሩ</button>
-            <button id="adminOnlyBtn" class="btn" style="background:var(--text); margin-top:5px; display:none;" onclick="viewReceipts()">📥 የገቡ ደረሰኞችን እይ (Admin Only)</button>
+            <button class="btn" style="background:var(--secondary)" onclick="toggleAdmin()">+ አዲስ ምርት ይጨምሩ</button>
+            <button id="adminOnlyBtn" class="btn" style="background:var(--text); margin-top:5px; display:none;" onclick="viewReceipts()">📥 የገቡ ደረሰኞች (Admin)</button>
             <button class="btn" style="background:var(--danger); margin-top:10px; width:100px; font-size:12px; padding:8px;" onclick="logout()">ውጣ</button>
         </div>
     </div>
 
-    <!-- Admin Form -->
-    <div id="adminForm" class="card" style="display:none;">
-        <input type="text" id="pName" placeholder="የምርት ስም">
-        <input type="number" id="pPrice" placeholder="ዋጋ">
-        <select id="pCat"><option value="እህል">እህል</option><option value="ከብት">ከብት</option><option value="ማር">ማር</option><option value="ሌላ">ሌላ</option></select>
-        <input type="text" id="pSeller" placeholder="የሻጭ ስም">
-        <input type="text" id="pPhone" placeholder="ስልክ ቁጥር">
-        <input type="text" id="pTg" placeholder="ቴሌግራም ስም (ያለ @)">
-        <input type="text" id="pBank" placeholder="የባንክ/ቴሌብር መረጃ">
-        <input type="text" id="pLoc" placeholder="ቦታ (ቀበሌ)">
-        <textarea id="pDesc" placeholder="ዝርዝር መግለጫ"></textarea>
-        <input type="file" id="pImages" accept="image/*" multiple>
-        
-        <div style="margin: 10px 0; text-align: left;">
-            <button id="recBtn" class="btn" style="background:var(--accent); padding:10px; font-size:14px; width:auto;" onclick="startRecording()">🎙️ ድምፅ ቅረፅ</button>
-            <span id="recStatus" style="font-size:12px; margin-left:10px;"></span>
+    <div class="card">
+        <input type="text" id="searchBox" onkeyup="filterItems()" placeholder="ምርት ይፈልጉ...">
+        <div id="adminForm" style="display:none; margin-top:20px; border-top: 1px solid #eee; padding-top:20px;">
+            <input type="text" id="pName" placeholder="የምርት ስም">
+            <input type="number" id="pPrice" placeholder="ዋጋ">
+            <input type="text" id="pSeller" placeholder="የሻጭ ስም">
+            <input type="text" id="pPhone" placeholder="ስልክ ቁጥር">
+            <input type="text" id="pBank" placeholder="የባንክ መረጃ">
+            <input type="file" id="pImages" accept="image/*" multiple>
+            <div id="loading" style="display:none; color:var(--accent); font-weight:bold;">በመጫን ላይ...</div>
+            <button class="btn" id="submitBtn" onclick="processAndAdd()">ገበያ ላይ ይውጣ</button>
         </div>
-        
-        <div id="loading" style="display:none; color:var(--accent); font-weight:bold;">ምርቱ እየተዘጋጀ ነው...</div>
-        <button class="btn" id="submitBtn" onclick="processAndAdd()">ገበያ ላይ ይውጣ</button>
     </div>
 
-    <div class="card"><input type="text" id="searchBox" onkeyup="filterItems()" placeholder="ምርት ይፈልጉ..."></div>
-
-    <!-- Admin Receipt Section -->
     <div id="receiptSection" class="card">
-        <h2 style="text-align:center; color:var(--accent);">📥 የገቡ ደረሰኞች</h2>
         <div id="receiptList"></div>
         <button class="btn" style="background:var(--danger);" onclick="document.getElementById('receiptSection').style.display='none'">ዝጋ</button>
     </div>
@@ -146,9 +100,8 @@
 </div>
 
 <footer>
-    <div class="footer-logo">ሳይንት ገበያ</div>
-    <p>የአምሐራ ሳይንት ዲጂታል የንግድ ድልድይ</p>
-    <p>&copy;2026 crated by Yalelet Melkamu.መብቱ በህግ የተጠበቀ ነው።</p>
+    <h2>ሳይንት ገበያ</h2>
+    <p>&copy; 2026 created by yalelet melkamu።</p>
     <p>telegraph:@yale44</p>
     <p>phone:0914909712</p>
     <p>please contact me any question!!</p>
@@ -156,16 +109,15 @@
 
 <div id="payModal" class="modal">
     <div class="modal-content">
-        <h2 style="color:var(--accent)">የክፍያ ማረጋገጫ</h2>
-        <p id="bankDetails" style="font-size: 18px; font-weight: 900; margin: 20px 0; color:var(--secondary)"></p>
+        <h2 style="color:var(--accent)">ክፍያና ደረሰኝ</h2>
+        <p id="bankDetails" style="font-size: 18px; font-weight: 900; color:var(--secondary)"></p>
         <input type="file" id="receiptImg">
         <button class="btn" style="background:var(--accent); margin-top:10px" onclick="sendReceipt()">ደረሰኝ ላክ</button>
-        <button onclick="closeModal()" style="color:red; background:none; border:none; margin-top:20px; cursor:pointer; font-weight:bold;">ዝጋ</button>
+        <button onclick="closeModal()" style="color:red; background:none; border:none; margin-top:15px; cursor:pointer;">ዝጋ</button>
     </div>
 </div>
 
 <script>
-    // 1. Firebase Config
     const firebaseConfig = {
         apiKey: "AIzaSyAVn2jp_TR6Wjq1i_i5Xmk1Q6ea96KHMIQ",
         authDomain: "sayint-gebaye.firebaseapp.com",
@@ -178,44 +130,24 @@
 
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database(), auth = firebase.auth();
-    let allP = [], isLoginMode = true, curPName = "", slideIdx = {}, recordedAudio = null, mediaRecorder;
+    let allP = [], isLoginMode = true, curPName = "", slideIdx = {};
     const ADMIN_EMAIL = "melkamuy714@gmail.com";
 
-    // 2. Auth & UI Logic
     function toggleAuthMode() { isLoginMode = !isLoginMode; document.querySelector('#authBox h3').innerText = isLoginMode ? "ሻጭ ነዎት? ይግቡ" : "እንደ አዲስ ሻጭ ይመዝገቡ"; }
     async function handleAuth() {
         const e = document.getElementById('authEmail').value, p = document.getElementById('authPass').value;
         try { if(isLoginMode) await auth.signInWithEmailAndPassword(e, p); else await auth.createUserWithEmailAndPassword(e, p); } catch(err) { alert(err.message); }
     }
     auth.onAuthStateChanged(u => {
-        if(u) { 
-            document.getElementById('loggedOutUI').style.display="none"; document.getElementById('loggedInUI').style.display="block"; document.getElementById('userDisp').innerText=u.email;
-            if(u.email === ADMIN_EMAIL) document.getElementById('adminOnlyBtn').style.display = "block";
-        } else { document.getElementById('loggedOutUI').style.display="block"; document.getElementById('loggedInUI').style.display="none"; }
-        if(allP.length > 0) renderGrid(allP);
+        if(u) { document.getElementById('loggedOutUI').style.display="none"; document.getElementById('loggedInUI').style.display="block"; document.getElementById('userDisp').innerText=u.email; if(u.email === ADMIN_EMAIL) document.getElementById('adminOnlyBtn').style.display = "block"; }
+        else { document.getElementById('loggedOutUI').style.display="block"; document.getElementById('loggedInUI').style.display="none"; }
     });
     function logout() { auth.signOut(); location.reload(); }
 
-    // 3. Voice Logic
-    async function startRecording() {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        mediaRecorder = new MediaRecorder(stream);
-        let chunks = [];
-        mediaRecorder.ondataavailable = e => chunks.push(e.data);
-        mediaRecorder.onstop = () => {
-            const reader = new FileReader(); reader.readAsDataURL(new Blob(chunks));
-            reader.onloadend = () => { recordedAudio = reader.result; document.getElementById('recStatus').innerText = "✅ ተቀድቷል"; };
-        };
-        mediaRecorder.start(); document.getElementById('recBtn').innerText = "🛑 አቁም"; document.getElementById('recBtn').onclick = stopRecording;
-    }
-    function stopRecording() { mediaRecorder.stop(); document.getElementById('recBtn').innerText = "🎙️ ድምፅ ቅረፅ"; document.getElementById('recBtn').onclick = startRecording; }
-
-    // 4. Main Product Engine
     async function processAndAdd() {
         const fs = document.getElementById('pImages').files, n = document.getElementById('pName').value;
         if(fs.length === 0 || !n) return;
         document.getElementById('loading').style.display="block";
-        document.getElementById('submitBtn').disabled = true;
         let cImgs = [];
         for (let f of fs) { 
             const r = new FileReader(); r.readAsDataURL(f); 
@@ -230,18 +162,16 @@
             });
         }
         db.ref('products').push({
-            name: n, price: Number(document.getElementById('pPrice').value), category: document.getElementById('pCat').value,
-            seller: document.getElementById('pSeller').value, phone: document.getElementById('pPhone').value,
-            telegram: document.getElementById('pTg').value, bank: document.getElementById('pBank').value,
-            loc: document.getElementById('pLoc').value, desc: document.getElementById('pDesc').value,
-            images: cImgs, voice: recordedAudio || "", status: 'available', views: 0, likes: 0, dislikes: 0, verified: false, 
+            name: n, price: Number(document.getElementById('pPrice').value), seller: document.getElementById('pSeller').value,
+            phone: document.getElementById('pPhone').value, bank: document.getElementById('pBank').value,
+            images: cImgs, status: 'available', views: 0, likes: 0, dislikes: 0, verified: false, 
             owner: auth.currentUser.email, time: Date.now()
         }).then(() => location.reload());
     }
 
     db.ref('products').on('value', snap => {
         allP = []; snap.forEach(c => { let d=c.val(); d.id=c.key; allP.push(d); });
-        filterItems();
+        renderGrid(allP);
     });
 
     function renderGrid(items) {
@@ -251,7 +181,6 @@
             const imgs = p.images || [p.img]; if(slideIdx[id] === undefined) slideIdx[id] = 0;
             const isOwner = auth.currentUser && (auth.currentUser.email === p.owner || auth.currentUser.email === ADMIN_EMAIL);
             let comms = ""; if(p.comments) Object.values(p.comments).forEach(c => comms += `<div class="comm-item">💬 ${c.text}</div>`);
-
             grid.innerHTML += `
                 <div class="product-card ${isSold ? 'sold' : ''}">
                     <div class="verified-badge" style="display: ${isVer ? 'flex' : 'none'};">✅ የታመነ</div>
@@ -261,12 +190,10 @@
                         <button class="slide-btn prev" onclick="moveSlide('${id}', -1, ${imgs.length})">❮</button>
                         <img src="${imgs[slideIdx[id]]}" id="v-${id}" onclick="upStat('${id}','views'); openFS(this.src)">
                         <button class="slide-btn next" onclick="moveSlide('${id}', 1, ${imgs.length})">❯</button>
-                        <div class="img-counter"><span id="ix-${id}">${slideIdx[id]+1}</span>/${imgs.length}</div>
                     </div>
                     <div class="product-info">
                         <h3>${p.name}</h3>
                         <p class="price">${Number(p.price).toLocaleString()} ብር</p>
-                        ${p.voice ? `<audio controls class="voice-player" src="${p.voice}"></audio>` : ''}
                         <div class="vote-row">
                             <button class="vote-btn" onclick="upStat('${id}','likes')">👍 ${p.likes||0}</button>
                             <button class="vote-btn" onclick="upStat('${id}','dislikes')">👎 ${p.dislikes||0}</button>
@@ -277,12 +204,11 @@
                         </div>
                         <div class="comment-area">
                             <div class="comm-list">${comms||'አስተያየት የለም'}</div>
-                            <div style="display:flex; gap:5px;"><input type="text" id="in-${id}" placeholder="አስተያየት..." style="margin-bottom:0; font-size:12px"><button class="btn" style="width:60px; padding:5px" onclick="addComm('${id}')">ላክ</button></div>
+                            <div style="display:flex; gap:5px;"><input type="text" id="in-${id}" placeholder="አስተያየት..." style="margin:0; font-size:12px"><button class="btn" style="width:60px; padding:5px" onclick="addComm('${id}')">ላክ</button></div>
                         </div>
                         <div class="admin-box" style="${isOwner ? '' : 'display:none;'}">
                             <button class="btn-sm" style="background:var(--accent); display:${auth.currentUser?.email === ADMIN_EMAIL ? 'block' : 'none'}" onclick="verifyItem('${id}')">Verify ✅</button>
                             <button class="btn-sm" style="background:#34495e" onclick="markSold('${id}')">ተሽጧል</button>
-                            <button class="btn-sm" style="background:var(--secondary)" onclick="editItem('${id}','${p.price}')">Edit ✏️</button>
                             <button class="btn-sm" style="background:var(--danger)" onclick="delItem('${id}')">አጥፋ</button>
                         </div>
                     </div>
@@ -290,8 +216,7 @@
         });
     }
 
-    // --- Helpers ---
-    function moveSlide(id, dir, len) { slideIdx[id] = (slideIdx[id] + dir + len) % len; const p = allP.find(x => x.id === id); document.getElementById(`v-${id}`).src = p.images[slideIdx[id]]; document.getElementById(`ix-${id}`).innerText = slideIdx[id] + 1; }
+    function moveSlide(id, dir, len) { slideIdx[id] = (slideIdx[id] + dir + len) % len; const p = allP.find(x => x.id === id); document.getElementById(`v-${id}`).src = p.images[slideIdx[id]]; }
     function upStat(id, type) { db.ref('products/'+id+'/'+type).transaction(c => (c||0)+1); }
     function addComm(id) { const t=document.getElementById('in-'+id).value; if(t){db.ref('products/'+id+'/comments').push({text:t}); document.getElementById('in-'+id).value="";}}
     function openPay(n,b) { curPName=n; document.getElementById('bankDetails').innerText=b; document.getElementById('payModal').style.display="block"; }
@@ -299,24 +224,22 @@
     function toggleTheme() { document.getElementById('body').classList.toggle('dark-mode'); }
     function toggleAdmin() { const f = document.getElementById('adminForm'); f.style.display = f.style.display==='none' ? 'block' : 'none'; }
     function openFS(s) { document.getElementById('fullImg').src = s; document.getElementById('fullScreenOverlay').style.display = "flex"; }
-    function verifyItem(id) { if(prompt("Admin PIN?")==="2024") db.ref('products/'+id).update({verified:true}); }
     function markSold(id) { if(prompt("PIN?")==="2024") db.ref('products/'+id).update({status:'sold'}); }
-    function editItem(id, oldP) { const nP = prompt("አዲሱን ዋጋ ያስገቡ፦", oldP); if(nP) db.ref('products/'+id).update({price: Number(nP)}); }
     function delItem(id) { if(prompt("PIN?")==="2024") db.ref('products/'+id).remove(); }
-    function filterItems() { const t = document.getElementById('searchBox').value.toLowerCase(); renderGrid(allP.filter(p => p.name.toLowerCase().includes(t))); }
+    function verifyItem(id) { if(prompt("PIN?")==="2024") db.ref('products/'+id).update({verified:true}); }
     function sendReceipt() {
         const f = document.getElementById('receiptImg').files[0]; if(!f) return;
         const r = new FileReader(); r.readAsDataURL(f);
         r.onload = () => { db.ref('receipts').push({product:curPName, img:r.result, time:new Date().toLocaleString()}).then(() => { alert("ተልኳል!"); closeModal(); }); };
     }
     function viewReceipts() {
-        const s = document.getElementById('receiptSection'); s.style.display="block";
+        document.getElementById('receiptSection').style.display="block";
         db.ref('receipts').on('value', snap => {
             const list = document.getElementById('receiptList'); list.innerHTML = "";
-            snap.forEach(c => { const d=c.val(); list.innerHTML += `<div class="receipt-card"><img src="${d.img}" onclick="openFS(this.src)"><div style="flex:1"><p><strong>ምርት፡</strong> ${d.product}</p><p style="font-size:12px;">${d.time}</p><button onclick="db.ref('receipts/${c.key}').remove()" style="background:var(--danger); color:white; border:none; padding:5px 12px; border-radius:10px; cursor:pointer; font-weight:bold;">አጥፋ</button></div></div>`; });
+            snap.forEach(c => { const d=c.val(); list.innerHTML += `<div class="receipt-card"><img src="${d.img}" style="width:100px; cursor:pointer;" onclick="openFS(this.src)"><div><p><strong>ምርት፡</strong> ${d.product}</p><p style="font-size:12px;">${d.time}</p><button onclick="db.ref('receipts/${c.key}').remove()" style="background:var(--danger); color:white; border:none; padding:5px; border-radius:10px;">አጥፋ</button></div></div>`; });
         });
-        window.scrollTo(0, s.offsetTop);
     }
+    function filterItems() { const t = document.getElementById('searchBox').value.toLowerCase(); renderGrid(allP.filter(p => p.name.toLowerCase().includes(t))); }
 </script>
 </body>
 </html>
